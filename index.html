@@ -1,668 +1,1094 @@
 <!DOCTYPE html>
-<html lang="it" class="dark">
+<html lang="it">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>GYM HIT 2·1·3 — Coach</title>
-
-  <!-- Configurazione PWA per installazione su Schermata Home (iOS & Android) -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <meta name="theme-color" content="#050505" />
-  <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="GYM HIT" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <title>GYM HIT · Coach 2·1·3</title>
 
-  <!-- Icona SVG incorporata (Sfondo #050505, Anello #95D600, GYM / HIT / 2·1·3) -->
+  <!-- Icona PWA SVG incorporata -->
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='112' fill='%23050505'/%3E%3Ccircle cx='256' cy='256' r='185' fill='none' stroke='%231a1a1a' stroke-width='26'/%3E%3Cpath d='M 256 71 A 185 185 0 1 1 85 328' fill='none' stroke='%2395D600' stroke-width='26' stroke-linecap='round'/%3E%3Ctext x='256' y='185' font-family='system-ui, -apple-system, sans-serif' font-weight='800' font-size='38' fill='%2395D600' text-anchor='middle' letter-spacing='6'%3EGYM%3C/text%3E%3Ctext x='256' y='285' font-family='system-ui, -apple-system, sans-serif' font-weight='900' font-size='115' fill='%23ffffff' text-anchor='middle' letter-spacing='4'%3EHIT%3C/text%3E%3Ctext x='256' y='345' font-family='system-ui, -apple-system, sans-serif' font-weight='800' font-size='38' fill='%2395D600' text-anchor='middle' letter-spacing='6'%3E2%C2%B71%C2%B73%3C/text%3E%3C/svg%3E" />
   <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' fill='%23050505'/%3E%3Ccircle cx='256' cy='256' r='185' fill='none' stroke='%231a1a1a' stroke-width='26'/%3E%3Cpath d='M 256 71 A 185 185 0 1 1 85 328' fill='none' stroke='%2395D600' stroke-width='26' stroke-linecap='round'/%3E%3Ctext x='256' y='185' font-family='system-ui, -apple-system, sans-serif' font-weight='800' font-size='38' fill='%2395D600' text-anchor='middle' letter-spacing='6'%3EGYM%3C/text%3E%3Ctext x='256' y='285' font-family='system-ui, -apple-system, sans-serif' font-weight='900' font-size='115' fill='%23ffffff' text-anchor='middle' letter-spacing='4'%3EHIT%3C/text%3E%3Ctext x='256' y='345' font-family='system-ui, -apple-system, sans-serif' font-weight='800' font-size='38' fill='%2395D600' text-anchor='middle' letter-spacing='6'%3E2%C2%B71%C2%B73%3C/text%3E%3C/svg%3E" />
 
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          fontFamily: {
-            sans: ['Inter', 'sans-serif'],
-          },
-          colors: {
-            obsidian: '#050505',
-            card: '#121212',
-            cardAlt: '#171717',
-            stroke: '#1e1e1e',
-            neon: '#95D600',
-          }
-        }
-      }
-    }
-  </script>
   <style>
-    /* ==========================================================================
-       VARIABILI DIMENSIONI FONT (MODIFICA QUI PER REGOLARE TUTTA L'APP)
-       Valori aumentati di 2-4pt per lettura rapida su smartphone in palestra
-       ========================================================================== */
     :root {
-      --fs-micro: 12px;      /* Etichette compatte, badge, unità (kg/rip) */
-      --fs-sm: 14px;         /* Sottotitoli, pulsanti secondari, note */
-      --fs-base: 16px;       /* Testo standard, tab A/B, pulsanti principali */
-      --fs-guide: 15px;      /* Descrizioni tecniche (Setup, Esecuzione, Errore) */
-      --fs-ex-title: 18px;   /* Titolo del singolo esercizio */
-      --fs-num: 19px;        /* Numeri pesi (kg) e ripetizioni negli stepper */
-      --fs-timer: 25px;      /* Display timer recupero e timer cardio */
+      --bg: #050505;
+      --surface: #121212;
+      --surface-2: #1a1a1a;
+      --border: #2a2a2a;
+      --text: #f8fafc;
+      --muted: #a1a1aa;
+      --neon: #95D600;
+      --neon-dim: rgba(149, 214, 0, 0.14);
+      --warn: #f59e0b;
+      --warn-dim: rgba(245, 158, 11, 0.16);
+      --danger: #ef4444;
+      --sky: #38bdf8;
+      --radius: 14px;
+
+      /* === DIMENSIONI FONT CENTRALIZZATE (Modifica qui se vuoi ingrandire/ridurre) === */
+      --fs-micro: 12px;   /* Etichette superiori (PESO KG, RIPETIZIONI, RECUPERO) */
+      --fs-small: 14px;   /* Sottotitoli, badge, note secondarie */
+      --fs-body: 16px;    /* Testo base e descrizioni */
+      --fs-guide: 16px;   /* Testo guida tecnica (Setup, Esecuzione, Errore) */
+      --fs-title: 18px;   /* Titoli esercizi e sezioni */
+      --fs-header: 20px;  /* Titolo in alto GYM HIT */
+      --fs-num: 22px;     /* Numeri pesi e ripetizioni nelle caselle */
+      --fs-timer: 26px;   /* Numeri timer in basso */
     }
 
     * {
-      -webkit-tap-highlight-color: transparent;
       box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
     }
 
-    html, body {
-      max-width: 100%;
-      overflow-x: hidden;
+    html {
+      margin: 0;
+      padding: 0;
+      background-color: var(--bg);
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
     }
 
     body {
-      background-color: #050505;
-      color: #ffffff;
-      font-family: 'Inter', sans-serif;
-      font-size: var(--fs-base);
-      padding-bottom: 148px; /* Spazio adeguato per lo sticky dock ingrandito */
-      overscroll-behavior-y: contain;
+      margin: 0;
+      padding: 0;
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      font-size: var(--fs-body);
+      line-height: 1.45;
+      padding-bottom: 165px;
+      min-height: 100vh;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
     }
 
-    .btn-tactile:active {
-      transform: scale(0.96);
+    button {
+      touch-action: manipulation;
     }
 
-    ::-webkit-scrollbar {
-      width: 4px;
-      height: 4px;
+    .container {
+      width: 100%;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 12px 12px 24px 12px;
     }
-    ::-webkit-scrollbar-thumb {
-      background: #2a2a2a;
-      border-radius: 9999px;
+
+    /* Header */
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 6px 0 12px 0;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 12px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: var(--fs-header);
+      font-weight: 900;
+      letter-spacing: 0.5px;
+      line-height: 1.1;
+    }
+
+    .brand h1 span {
+      color: var(--neon);
+    }
+
+    .brand .sub {
+      font-size: var(--fs-micro);
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    .icon-btn {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-radius: 10px;
+      padding: 8px 10px;
+      font-size: var(--fs-small);
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .icon-btn.active {
+      border-color: var(--neon);
+      color: var(--neon);
+      background: var(--neon-dim);
+    }
+
+    /* Status & Deload Banner */
+    .status-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 12px;
+      margin-bottom: 12px;
+    }
+
+    .status-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .week-badge {
+      font-size: var(--fs-small);
+      font-weight: 800;
+      color: var(--neon);
+      background: var(--neon-dim);
+      padding: 5px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(149, 214, 0, 0.3);
+    }
+
+    .deload-toggle {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-size: var(--fs-small);
+      font-weight: 700;
+      padding: 7px 12px;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    .deload-toggle.active {
+      background: var(--warn-dim);
+      border-color: var(--warn);
+      color: var(--warn);
+    }
+
+    .deload-alert {
+      margin-top: 10px;
+      padding: 10px;
+      border-radius: 10px;
+      background: var(--warn-dim);
+      border: 1px solid rgba(245, 158, 11, 0.4);
+      color: #fde68a;
+      font-size: var(--fs-small);
+      display: none;
+    }
+
+    .deload-alert.show {
+      display: block;
+    }
+
+    /* Workout Switcher */
+    .tabs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .tab-btn {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      padding: 12px 8px;
+      border-radius: var(--radius);
+      font-size: var(--fs-body);
+      font-weight: 800;
+      cursor: pointer;
+      text-align: center;
+    }
+
+    .tab-btn .tab-sub {
+      display: block;
+      font-size: var(--fs-micro);
+      font-weight: 500;
+      margin-top: 3px;
+      opacity: 0.85;
+    }
+
+    .tab-btn.active {
+      background: var(--neon-dim);
+      border-color: var(--neon);
+      color: var(--text);
+    }
+
+    .tab-btn.active .tab-title {
+      color: var(--neon);
+    }
+
+    /* Breathing reminder */
+    .breath-bar {
+      background: var(--surface-2);
+      border-left: 3px solid var(--neon);
+      padding: 10px 12px;
+      border-radius: 8px;
+      font-size: var(--fs-small);
+      color: #e4e4e7;
+      margin-bottom: 14px;
+    }
+
+    .breath-bar strong {
+      color: var(--neon);
+    }
+
+    /* Section Cards */
+    .section-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px;
+      margin-bottom: 12px;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .section-title {
+      font-size: var(--fs-title);
+      font-weight: 800;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .chip {
+      font-size: var(--fs-micro);
+      font-weight: 700;
+      padding: 4px 9px;
+      border-radius: 6px;
+      background: var(--surface-2);
+      color: var(--muted);
+      border: 1px solid var(--border);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    /* Mobility Checklist */
+    .mob-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+    }
+
+    .mob-item:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .mob-item input[type="checkbox"] {
+      width: 24px;
+      height: 24px;
+      accent-color: var(--neon);
+      margin-top: 2px;
+      flex-shrink: 0;
+    }
+
+    .mob-text strong {
+      display: block;
+      font-size: var(--fs-body);
+    }
+
+    .mob-text span {
+      font-size: var(--fs-small);
+      color: var(--muted);
+    }
+
+    /* Exercise Cards */
+    .pair-label {
+      font-size: var(--fs-small);
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--neon);
+      margin: 18px 0 8px 2px;
+    }
+
+    .ex-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px;
+      margin-bottom: 12px;
+    }
+
+    .ex-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .ex-code {
+      display: inline-block;
+      background: var(--neon);
+      color: #050505;
+      font-weight: 900;
+      font-size: var(--fs-micro);
+      padding: 2px 7px;
+      border-radius: 5px;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+
+    .ex-name {
+      font-size: var(--fs-title);
+      font-weight: 800;
+      margin: 0;
+      line-height: 1.25;
+    }
+
+    .ex-meta {
+      font-size: var(--fs-small);
+      color: var(--muted);
+      margin-top: 5px;
+    }
+
+    .guide-btn {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-size: var(--fs-small);
+      font-weight: 700;
+      padding: 8px 11px;
+      border-radius: 9px;
+      cursor: pointer;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .guide-box {
+      display: none;
+      margin-top: 12px;
+      padding: 12px;
+      background: var(--surface-2);
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      font-size: var(--fs-guide);
+      line-height: 1.45;
+    }
+
+    .guide-box.open {
+      display: block;
+    }
+
+    .guide-box p {
+      margin: 0 0 8px 0;
+    }
+
+    .guide-box p:last-child {
+      margin-bottom: 0;
+    }
+
+    .g-setup { color: #38bdf8; font-weight: 800; }
+    .g-exec { color: var(--neon); font-weight: 800; }
+    .g-err { color: #f87171; font-weight: 800; }
+
+    /* Progression Signal */
+    .prog-banner {
+      margin-top: 10px;
+      padding: 8px 10px;
+      border-radius: 8px;
+      font-size: var(--fs-small);
+      font-weight: 700;
+      background: rgba(149, 214, 0, 0.14);
+      border: 1px solid rgba(149, 214, 0, 0.4);
+      color: var(--neon);
+      display: none;
+    }
+
+    .prog-banner.show {
+      display: block;
+    }
+
+    /* Sets Grid */
+    .sets-wrap {
+      margin-top: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .set-row {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px;
+    }
+
+    .set-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+      font-size: var(--fs-small);
+      font-weight: 700;
+      color: var(--muted);
+    }
+
+    .deload-target {
+      color: var(--warn);
+      font-weight: 800;
+    }
+
+    .controls-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .stepper-group {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 6px;
+      text-align: center;
+      min-width: 0;
+    }
+
+    .stepper-label {
+      font-size: var(--fs-micro);
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      margin-bottom: 4px;
+      font-weight: 700;
+    }
+
+    .stepper-controls {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 2px;
+    }
+
+    .step-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--surface-2);
+      color: var(--text);
+      font-size: 22px;
+      font-weight: 800;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .step-btn:active {
+      background: var(--neon);
+      color: #050505;
+    }
+
+    .step-val {
+      font-size: var(--fs-num);
+      font-weight: 900;
+      font-variant-numeric: tabular-nums;
+      min-width: 0;
+      flex: 1;
+      text-align: center;
+      overflow: hidden;
+    }
+
+    /* Complete Workout Button */
+    .finish-btn {
+      width: 100%;
+      padding: 16px;
+      border-radius: var(--radius);
+      border: none;
+      background: var(--neon);
+      color: #050505;
+      font-size: var(--fs-title);
+      font-weight: 900;
+      cursor: pointer;
+      margin-top: 8px;
+      box-shadow: 0 4px 20px rgba(149, 214, 0, 0.25);
+    }
+
+    .finish-btn:active {
+      transform: scale(0.99);
+    }
+
+    /* Cardio Timer Mini */
+    .cardio-controls {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: 10px;
+      background: var(--surface-2);
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+    }
+
+    .cardio-time {
+      font-size: var(--fs-timer);
+      font-weight: 900;
+      font-variant-numeric: tabular-nums;
+      color: var(--neon);
+    }
+
+    /* Sticky Bottom Dock */
+    .bottom-dock {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(12, 12, 12, 0.97);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-top: 1px solid var(--border);
+      padding: 8px 10px calc(8px + env(safe-area-inset-bottom));
+      z-index: 100;
+    }
+
+    .dock-inner {
+      max-width: 600px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1.15fr;
+      gap: 8px;
+    }
+
+    .dock-box {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 8px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-width: 0;
+    }
+
+    .dock-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: var(--fs-micro);
+      font-weight: 800;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+
+    .dock-display {
+      font-size: var(--fs-timer);
+      font-weight: 900;
+      font-variant-numeric: tabular-nums;
+      text-align: center;
+      line-height: 1.1;
+      margin: 2px 0 6px 0;
+    }
+
+    .dock-btns {
+      display: flex;
+      gap: 5px;
+    }
+
+    .d-btn {
+      flex: 1;
+      padding: 8px 4px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      font-size: var(--fs-small);
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .d-btn.primary {
+      background: var(--neon);
+      color: #050505;
+      border-color: var(--neon);
+    }
+
+    /* Cadence States */
+    .cad-push { color: #38bdf8; }
+    .cad-hold { color: var(--warn); }
+    .cad-down { color: var(--neon); }
+
+    /* Modal for Backup / Info */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.85);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 200;
+    }
+
+    .modal-backdrop.open {
+      display: flex;
+    }
+
+    .modal {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px;
+      width: 100%;
+      max-width: 440px;
+      max-height: 85vh;
+      overflow-y: auto;
+    }
+
+    .modal h3 {
+      margin: 0 0 12px 0;
+      font-size: var(--fs-title);
+      color: var(--neon);
+    }
+
+    .modal-btn {
+      width: 100%;
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--surface-2);
+      color: var(--text);
+      font-size: var(--fs-body);
+      font-weight: 700;
+      margin-bottom: 10px;
+      cursor: pointer;
+    }
+
+    .toast {
+      position: fixed;
+      top: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--neon);
+      color: #050505;
+      font-weight: 900;
+      font-size: var(--fs-body);
+      padding: 10px 18px;
+      border-radius: 999px;
+      z-index: 300;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s;
+      box-shadow: 0 6px 24px rgba(0,0,0,0.6);
+      white-space: nowrap;
+    }
+
+    .toast.show {
+      opacity: 1;
     }
   </style>
 </head>
-<body class="antialiased selection:bg-[#95D600] selection:text-black">
+<body>
+  <div id="toast" class="toast">Salvato!</div>
 
-  <!-- TOAST NOTIFICHE -->
-  <div id="toast-container" class="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[94%] max-w-md pointer-events-none flex flex-col gap-2"></div>
-
-  <!-- HEADER FISSO -->
-  <header class="sticky top-0 z-30 bg-[#050505]/95 backdrop-blur-md border-b border-[#1e1e1e] px-3 py-3 shadow-xl">
-    <div class="max-w-lg mx-auto">
-      <!-- Riga 1: Brand + Pulsanti Regole/Dati -->
-      <div class="flex items-center justify-between gap-2 mb-2.5">
-        <div class="flex items-center gap-2 min-w-0 flex-1">
-          <!-- Mini icona SVG -->
-          <svg class="w-10 h-10 shrink-0" viewBox="0 0 512 512">
-            <rect width="512" height="512" rx="112" fill="#121212" stroke="#1e1e1e" stroke-width="16"/>
-            <circle cx="256" cy="256" r="185" fill="none" stroke="#222222" stroke-width="28"/>
-            <path d="M 256 71 A 185 185 0 1 1 85 328" fill="none" stroke="#95D600" stroke-width="28" stroke-linecap="round"/>
-            <text x="256" y="185" font-family="system-ui, sans-serif" font-weight="800" font-size="38" fill="#95D600" text-anchor="middle" letter-spacing="6">GYM</text>
-            <text x="256" y="285" font-family="system-ui, sans-serif" font-weight="900" font-size="115" fill="#ffffff" text-anchor="middle" letter-spacing="4">HIT</text>
-            <text x="256" y="345" font-family="system-ui, sans-serif" font-weight="800" font-size="38" fill="#95D600" text-anchor="middle" letter-spacing="6">2·1·3</text>
-          </svg>
-          <div class="min-w-0 flex-1">
-            <h1 class="text-[length:var(--fs-ex-title)] font-black tracking-tight text-white leading-tight truncate">
-              GYM <span class="text-[#95D600]">HIT</span> <span class="text-[length:var(--fs-sm)] font-bold text-neutral-400">2·1·3</span>
-            </h1>
-            <p id="header-subtitle" class="text-[length:var(--fs-micro)] text-neutral-300 mt-0.5 truncate">
-              Consigliata: <strong class="text-[#95D600]">Seduta A</strong> • Sett. 1 (0 sedute)
-            </p>
-          </div>
-        </div>
-
-        <div class="flex items-center gap-1.5 shrink-0">
-          <button onclick="openModal('modal-rules')" class="btn-tactile px-2.5 py-2 rounded-xl bg-[#121212] hover:bg-[#1a1a1a] border border-[#1e1e1e] text-[length:var(--fs-sm)] font-bold text-neutral-200 flex items-center gap-1">
-            <span class="text-[#95D600] font-black">?</span>
-            <span>Regole</span>
-          </button>
-          <button onclick="openModal('modal-backup')" class="btn-tactile px-2.5 py-2 rounded-xl bg-[#121212] hover:bg-[#1a1a1a] border border-[#1e1e1e] text-[length:var(--fs-sm)] font-bold text-neutral-200 flex items-center gap-1">
-            <span class="text-cyan-400 font-black">⇅</span>
-            <span>Dati</span>
-          </button>
+  <div class="container">
+    <header>
+      <div class="brand">
+        <svg width="42" height="42" viewBox="0 0 512 512" style="flex-shrink:0">
+          <rect width="512" height="512" rx="112" fill="#121212" stroke="#2a2a2a" stroke-width="16"/>
+          <circle cx="256" cy="256" r="185" fill="none" stroke="#1a1a1a" stroke-width="26"/>
+          <path d="M 256 71 A 185 185 0 1 1 85 328" fill="none" stroke="#95D600" stroke-width="26" stroke-linecap="round"/>
+          <text x="256" y="185" font-family="system-ui, sans-serif" font-weight="800" font-size="38" fill="#95D600" text-anchor="middle" letter-spacing="6">GYM</text>
+          <text x="256" y="285" font-family="system-ui, sans-serif" font-weight="900" font-size="115" fill="#ffffff" text-anchor="middle" letter-spacing="4">HIT</text>
+          <text x="256" y="345" font-family="system-ui, sans-serif" font-weight="800" font-size="38" fill="#95D600" text-anchor="middle" letter-spacing="6">2·1·3</text>
+        </svg>
+        <div>
+          <h1>GYM <span>HIT</span></h1>
+          <div class="sub">Protocollo 2026 · Forza & Resistenza</div>
         </div>
       </div>
-
-      <!-- Riga 2: Selettore Seduta A / Seduta B -->
-      <div class="grid grid-cols-2 gap-2 bg-[#121212] p-1 rounded-2xl border border-[#1e1e1e] mb-2.5">
-        <button id="tab-A" onclick="switchSession('A')" class="btn-tactile min-w-0 py-2.5 px-2 rounded-xl text-[length:var(--fs-base)] font-extrabold transition-all flex items-center justify-center gap-1.5">
-          <span class="truncate">SEDUTA A</span>
-          <span id="badge-rec-A" class="hidden shrink-0 text-[length:var(--fs-micro)] uppercase tracking-wider px-1.5 py-0.5 rounded-md bg-black/25 font-black">Oggi</span>
-        </button>
-        <button id="tab-B" onclick="switchSession('B')" class="btn-tactile min-w-0 py-2.5 px-2 rounded-xl text-[length:var(--fs-base)] font-extrabold transition-all flex items-center justify-center gap-1.5">
-          <span class="truncate">SEDUTA B</span>
-          <span id="badge-rec-B" class="hidden shrink-0 text-[length:var(--fs-micro)] uppercase tracking-wider px-1.5 py-0.5 rounded-md bg-black/25 font-black">Oggi</span>
-        </button>
+      <div class="header-actions">
+        <button id="wakeBtn" class="icon-btn" onclick="toggleWakeLock()" title="Schermo sempre acceso">☀️ Schermo</button>
+        <button class="icon-btn" onclick="openModal()" title="Dati e Regole">⚙️</button>
       </div>
+    </header>
 
-      <!-- Riga 3: Toggle Scarico (-30%) e Wake Lock -->
-      <div class="grid grid-cols-2 gap-2">
-        <button id="btn-deload" onclick="toggleDeload()" class="btn-tactile min-w-0 flex items-center justify-between px-3 py-2 rounded-xl border text-[length:var(--fs-sm)] font-bold transition-all bg-[#121212] border-[#1e1e1e] text-neutral-300">
-          <span class="flex items-center gap-1.5 min-w-0">
-            <span id="deload-dot" class="w-2.5 h-2.5 rounded-full bg-neutral-600 shrink-0"></span>
-            <span class="truncate">Scarico -30%</span>
-          </span>
-          <span id="deload-status" class="text-[length:var(--fs-micro)] font-black uppercase text-neutral-500 shrink-0 ml-1">OFF</span>
-        </button>
-
-        <button id="btn-wakelock" onclick="toggleWakeLock()" class="btn-tactile min-w-0 flex items-center justify-between px-3 py-2 rounded-xl border text-[length:var(--fs-sm)] font-bold transition-all bg-[#121212] border-[#1e1e1e] text-neutral-300">
-          <span class="flex items-center gap-1.5 min-w-0">
-            <span id="wakelock-dot" class="w-2.5 h-2.5 rounded-full bg-neutral-600 shrink-0"></span>
-            <span class="truncate">Schermo ON</span>
-          </span>
-          <span id="wakelock-status" class="text-[length:var(--fs-micro)] font-black uppercase text-neutral-500 shrink-0 ml-1">OFF</span>
-        </button>
+    <!-- Status & Deload -->
+    <div class="status-card">
+      <div class="status-row">
+        <span id="weekBadge" class="week-badge">Settimana 1 · Sedute: 0</span>
+        <button id="deloadBtn" class="deload-toggle" onclick="toggleDeload()">Scarico -30%: OFF</button>
       </div>
-    </div>
-  </header>
-
-  <!-- CONTENUTO PRINCIPALE -->
-  <main class="max-w-lg mx-auto px-3 pt-4 space-y-5">
-
-    <!-- BANNER AUTOMATICO SETTIMANA 6 (SCARICO) -->
-    <div id="deload-alert-banner" class="hidden rounded-2xl bg-amber-500/15 border border-amber-500/40 p-3.5 shadow-md">
-      <div class="flex items-start gap-3">
-        <div class="p-2 rounded-xl bg-amber-500/20 text-amber-400 shrink-0 mt-0.5 font-black text-[length:var(--fs-base)]">!</div>
-        <div class="flex-1 min-w-0">
-          <h3 class="text-[length:var(--fs-base)] font-extrabold text-amber-300">Settimana 6: Consigliato Scarico</h3>
-          <p class="text-[length:var(--fs-sm)] text-amber-100/90 mt-1 leading-relaxed">
-            Hai completato almeno 15 sedute. Per proteggere tendini e articolazioni, attiva la <strong>Modalità Scarico (-30%)</strong> per questa settimana.
-          </p>
-          <button onclick="activateDeloadFromBanner()" class="btn-tactile mt-2.5 px-3.5 py-2 rounded-xl bg-amber-500 text-black font-black text-[length:var(--fs-sm)]">
-            Attiva Scarico -30% Ora
-          </button>
-        </div>
+      <div id="deloadAlert" class="deload-alert">
+        ⚠️ <strong>Settimana di Scarico consigliata!</strong> Hai completato 5 settimane (15+ sedute). Attiva lo scarico per ridurre i pesi del 30% questa settimana e far recuperare tendini e articolazioni.
       </div>
     </div>
 
-    <!-- FASE 0: MOBILITÀ ARTICOLARE PRE-ALLENAMENTO (5 MIN) -->
-    <section class="rounded-2xl bg-[#121212] border border-[#1e1e1e] overflow-hidden shadow-md">
-      <div class="px-3.5 py-3 flex items-center justify-between gap-2 bg-[#171717]">
-        <button onclick="toggleSection('mobility-body', 'mobility-chevron')" class="flex items-center gap-2 text-left flex-1 min-w-0">
-          <span class="px-2 py-0.5 rounded-lg bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 text-[length:var(--fs-micro)] font-extrabold shrink-0">FASE 0</span>
-          <div class="min-w-0 flex-1">
-            <h2 class="text-[length:var(--fs-base)] font-extrabold text-white truncate">Mobilità (5 Min)</h2>
-            <p id="mobility-progress-text" class="text-[length:var(--fs-micro)] text-neutral-300 truncate">0/3 completati • Prima dei pesi</p>
-          </div>
-        </button>
-
-        <div class="flex items-center gap-1.5 shrink-0">
-          <!-- Timer rapido 5 minuti mobilità -->
-          <button id="mob-timer-btn" onclick="toggleMobilityTimer()" class="btn-tactile px-2.5 py-1.5 rounded-xl bg-cyan-500/20 border border-cyan-500/40 text-cyan-300 font-mono text-[length:var(--fs-sm)] font-extrabold">
-            ⏱ 05:00
-          </button>
-          <button onclick="toggleSection('mobility-body', 'mobility-chevron')" class="p-1 text-neutral-400">
-            <svg id="mobility-chevron" class="w-5 h-5 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
-          </button>
-        </div>
-      </div>
-
-      <div id="mobility-body" class="px-3.5 py-3 space-y-2.5 border-t border-[#1e1e1e]">
-        <label class="flex items-start gap-3 p-3 rounded-xl bg-[#0a0a0a] border border-[#1e1e1e] cursor-pointer active:bg-[#1a1a1a]">
-          <input type="checkbox" id="mob-0" onchange="updateMobility(0, this.checked)" class="mt-0.5 w-5 h-5 rounded-md accent-[#95D600] cursor-pointer shrink-0">
-          <div class="text-[length:var(--fs-guide)] leading-snug min-w-0 flex-1">
-            <span class="font-bold text-white block">1. Circonduzioni spalle con bastone/elastico</span>
-            <span class="text-neutral-300 text-[length:var(--fs-sm)]">10 ripetizioni lente a braccia tese, presa larga, senza piegare i gomiti.</span>
-          </div>
-        </label>
-
-        <label class="flex items-start gap-3 p-3 rounded-xl bg-[#0a0a0a] border border-[#1e1e1e] cursor-pointer active:bg-[#1a1a1a]">
-          <input type="checkbox" id="mob-1" onchange="updateMobility(1, this.checked)" class="mt-0.5 w-5 h-5 rounded-md accent-[#95D600] cursor-pointer shrink-0">
-          <div class="text-[length:var(--fs-guide)] leading-snug min-w-0 flex-1">
-            <span class="font-bold text-white block">2. Cat-Cow / Mobilizzazione colonna</span>
-            <span class="text-neutral-300 text-[length:var(--fs-sm)]">10 ripetizioni: inarca lentamente verso l'alto espirando, poi scendi inspirando.</span>
-          </div>
-        </label>
-
-        <label class="flex items-start gap-3 p-3 rounded-xl bg-[#0a0a0a] border border-[#1e1e1e] cursor-pointer active:bg-[#1a1a1a]">
-          <input type="checkbox" id="mob-2" onchange="updateMobility(2, this.checked)" class="mt-0.5 w-5 h-5 rounded-md accent-[#95D600] cursor-pointer shrink-0">
-          <div class="text-[length:var(--fs-guide)] leading-snug min-w-0 flex-1">
-            <span class="font-bold text-white block">3. Squat a corpo libero con pausa</span>
-            <span class="text-neutral-300 text-[length:var(--fs-sm)]">8 ripetizioni: scendi controllato, 2 secondi di pausa in basso spingendo ginocchia in fuori.</span>
-          </div>
-        </label>
-      </div>
-    </section>
-
-    <!-- PROMEMORIA PARAMETRI CHIAVE -->
-    <div class="grid grid-cols-3 gap-1.5 text-center">
-      <div class="p-2 rounded-xl bg-[#121212] border border-[#1e1e1e] min-w-0">
-        <span class="block text-[length:var(--fs-micro)] uppercase tracking-wider text-neutral-400 truncate">Cadenza</span>
-        <span class="text-[length:var(--fs-sm)] font-extrabold text-[#95D600] block truncate">2s • 1s • 3s</span>
-      </div>
-      <div class="p-2 rounded-xl bg-[#121212] border border-[#1e1e1e] min-w-0">
-        <span class="block text-[length:var(--fs-micro)] uppercase tracking-wider text-neutral-400 truncate">Respiro</span>
-        <span class="text-[length:var(--fs-sm)] font-extrabold text-cyan-400 block truncate">Espira spinta</span>
-      </div>
-      <div class="p-2 rounded-xl bg-[#121212] border border-[#1e1e1e] min-w-0">
-        <span class="block text-[length:var(--fs-micro)] uppercase tracking-wider text-neutral-400 truncate">Margine</span>
-        <span class="text-[length:var(--fs-sm)] font-extrabold text-amber-400 block truncate">1–2 Rip (RIR)</span>
-      </div>
-    </div>
-
-    <!-- CONTENITORE ESERCIZI (FASE 1) -->
-    <div id="workout-container" class="space-y-6"></div>
-
-    <!-- FASE 2: CARDIO FINALE BORG 12-14 (15 MIN) -->
-    <section class="rounded-2xl bg-[#121212] border border-[#1e1e1e] p-4 shadow-md space-y-3">
-      <div class="flex items-center justify-between gap-2">
-        <div class="flex items-center gap-2 min-w-0 flex-1">
-          <span class="px-2 py-0.5 rounded-lg bg-amber-500/20 text-amber-300 border border-amber-500/30 text-[length:var(--fs-micro)] font-extrabold shrink-0">FASE 2</span>
-          <h2 class="text-[length:var(--fs-base)] font-extrabold text-white truncate">Cardio (15 Min)</h2>
-        </div>
-        <span id="cardio-display" class="font-mono text-[length:var(--fs-timer)] font-black text-amber-400 tracking-wider shrink-0">15:00</span>
-      </div>
-
-      <div class="p-3 rounded-xl bg-[#0a0a0a] border border-[#1e1e1e] text-[length:var(--fs-guide)] text-neutral-200 leading-relaxed space-y-2">
-        <p><strong class="text-amber-300">Scala Borg 12–14 (Test del parlato):</strong> Tapis roulant in salita (4–6%) o cyclette. Devi sudare e sentire il respiro impegnato: <em>riesci a dire una frase di 4–5 parole, ma non a cantare o parlare di continuo.</em></p>
-        <p class="text-[length:var(--fs-sm)] text-neutral-300"><strong class="text-cyan-400">Sicurezza ACC 2026:</strong> Mantieni la respirazione fluida e continua senza mai trattenere il fiato (no manovra di Valsalva).</p>
-      </div>
-
-      <div class="grid grid-cols-3 gap-2">
-        <button id="cardio-start-btn" onclick="toggleCardioTimer()" class="btn-tactile col-span-2 py-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-black text-[length:var(--fs-base)] transition-all">
-          Avvia 15:00
-        </button>
-        <button onclick="resetCardioTimer()" class="btn-tactile py-3 rounded-xl bg-[#1a1a1a] hover:bg-[#242424] text-neutral-200 font-bold text-[length:var(--fs-base)] border border-[#2a2a2a]">
-          Reset
-        </button>
-      </div>
-    </section>
-
-    <!-- PULSANTE COMPLETA E SALVA SEDUTA -->
-    <section class="pt-1 pb-4">
-      <button onclick="completeWorkout()" class="btn-tactile w-full py-4 px-4 rounded-2xl bg-[#95D600] hover:bg-[#a6eb00] text-black font-black text-[length:var(--fs-base)] shadow-lg shadow-[#95D600]/20 flex items-center justify-center gap-2 transition-all">
-        <svg class="w-6 h-6 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
-        <span id="btn-complete-label" class="truncate">COMPLETA E SALVA SEDUTA A</span>
+    <!-- Workout Tabs -->
+    <div class="tabs">
+      <button id="tabA" class="tab-btn active" onclick="selectWorkout('A')">
+        <span class="tab-title">SEDUTA A</span>
+        <span class="tab-sub">Spinta/Tirata Orizz. + Leg Press</span>
       </button>
-      <p class="text-center text-[length:var(--fs-sm)] text-neutral-400 mt-2 leading-snug">
-        Incrementa il contatore sedute, salva i carichi e prepara la rotazione successiva.
-      </p>
-    </section>
+      <button id="tabB" class="tab-btn" onclick="selectWorkout('B')">
+        <span class="tab-title">SEDUTA B</span>
+        <span class="tab-sub">Spinta/Tirata Vert. + Goblet Squat</span>
+      </button>
+    </div>
 
-  </main>
+    <!-- Breathing & Effort Reminder -->
+    <div class="breath-bar">
+      <strong>Regola d'oro:</strong> Soffia fuori l'aria mentre spingi/tiri, inspira mentre scendi in <strong>3 sec</strong>. Mai trattenere il fiato (no Valsalva). Fermati a <strong>1–2 rip</strong> dal cedimento tecnico.
+    </div>
 
-  <!-- STICKY DOCK IN BASSO (USO CON UN POLLICE) -->
-  <div class="fixed bottom-0 left-0 right-0 z-40 bg-[#050505]/95 backdrop-blur-lg border-t border-[#1e1e1e] px-2.5 py-2.5 shadow-2xl">
-    <div class="max-w-lg mx-auto grid grid-cols-2 gap-2">
-      
-      <!-- SINISTRA: TIMER RECUPERO -->
-      <div class="rounded-2xl bg-[#121212] border border-[#1e1e1e] p-2 flex flex-col justify-between min-w-0">
-        <div class="flex items-center justify-between px-1 gap-1">
-          <span class="text-[length:var(--fs-micro)] font-bold uppercase tracking-wider text-neutral-400 truncate">Recupero</span>
-          <span id="rest-timer-display" class="font-mono text-[length:var(--fs-timer)] font-black text-white leading-none shrink-0">00:00</span>
+    <!-- Phase 0: Mobility -->
+    <div class="section-card">
+      <div class="section-header">
+        <h2 class="section-title">Fase 0 · Mobilità (5 min)</h2>
+        <button class="icon-btn" onclick="startRest(300)">⏱️ 5:00</button>
+      </div>
+      <label class="mob-item">
+        <input type="checkbox" id="mob1" onchange="saveMobility()" />
+        <div class="mob-text">
+          <strong>1. Circonduzioni spalle con bastone (10 rip)</strong>
+          <span>Braccia tese, presa larga, passa sopra la testa fino a dietro senza piegare i gomiti.</span>
         </div>
-        <div class="grid grid-cols-3 gap-1 mt-1.5">
-          <button onclick="startRestTimer(60)" class="btn-tactile py-2 rounded-xl bg-cyan-500/20 hover:bg-cyan-500/30 border border-cyan-500/40 text-cyan-300 font-black text-[length:var(--fs-sm)]">
-            60s
-          </button>
-          <button onclick="startRestTimer(45)" class="btn-tactile py-2 rounded-xl bg-cyan-500/20 hover:bg-cyan-500/30 border border-cyan-500/40 text-cyan-300 font-black text-[length:var(--fs-sm)]">
-            45s
-          </button>
-          <button onclick="stopRestTimer()" class="btn-tactile py-2 rounded-xl bg-[#1c1c1c] hover:bg-[#262626] border border-[#2a2a2a] text-neutral-200 font-bold text-[length:var(--fs-sm)]">
-            Stop
-          </button>
+      </label>
+      <label class="mob-item">
+        <input type="checkbox" id="mob2" onchange="saveMobility()" />
+        <div class="mob-text">
+          <strong>2. Cat-Cow colonna vertebrale (10 rip)</strong>
+          <span>A quattro zampe: inarca verso l'alto espirando, scendi verso il basso inspirando.</span>
+        </div>
+      </label>
+      <label class="mob-item">
+        <input type="checkbox" id="mob3" onchange="saveMobility()" />
+        <div class="mob-text">
+          <strong>3. Squat corpo libero con pausa (8 rip)</strong>
+          <span>Scendi lento, resta 2 secondi in basso spingendo le ginocchia in fuori, talloni a terra.</span>
+        </div>
+      </label>
+    </div>
+
+    <!-- Dynamic Exercises Container -->
+    <div id="exercisesContainer"></div>
+
+    <!-- Phase Final: Cardio -->
+    <div class="section-card">
+      <div class="section-header">
+        <h2 class="section-title">Cardio Finale · Borg 12–14</h2>
+        <span class="chip">15 Minuti</span>
+      </div>
+      <div style="font-size: var(--fs-small); color: var(--muted);">
+        Tapis roulant in salita (4–6%, 4.5–5.5 km/h) o Cyclette. <strong>Test del parlato:</strong> devi riuscire a dire una frase di 4–5 parole ma non a parlare fluido.
+      </div>
+      <div class="cardio-controls">
+        <div id="cardioDisplay" class="cardio-time">15:00</div>
+        <div style="display:flex; gap:6px;">
+          <button id="cardioStartBtn" class="d-btn primary" style="padding:8px 14px;" onclick="toggleCardio()">Avvia</button>
+          <button class="d-btn" style="padding:8px 12px;" onclick="resetCardio()">Reset</button>
+        </div>
+      </div>
+    </div>
+
+    <button class="finish-btn" onclick="completeWorkout()">✓ Completa e Registra Seduta</button>
+  </div>
+
+  <!-- Sticky Bottom Dock -->
+  <div class="bottom-dock">
+    <div class="dock-inner">
+      <!-- Rest Timer -->
+      <div class="dock-box">
+        <div class="dock-top">
+          <span>RECUPERO</span>
+          <span id="restStatus" style="color:var(--neon)">PRONTO</span>
+        </div>
+        <div id="restDisplay" class="dock-display">01:00</div>
+        <div class="dock-btns">
+          <button class="d-btn primary" onclick="startRest(60)">60s</button>
+          <button class="d-btn" onclick="startRest(45)">45s</button>
+          <button class="d-btn" onclick="stopRest()">Stop</button>
         </div>
       </div>
 
-      <!-- DESTRA: METRONOMO CADENZA 2·1·3 -->
-      <div id="metronome-box" class="rounded-2xl bg-[#121212] border border-[#1e1e1e] p-2 flex flex-col justify-between transition-colors duration-200 min-w-0">
-        <div class="flex items-center justify-between px-1 gap-1">
-          <span id="metro-phase-label" class="text-[length:var(--fs-micro)] font-extrabold uppercase tracking-wider text-[#95D600] truncate">Cadenza 2·1·3</span>
-          <span class="text-[length:var(--fs-sm)] font-bold text-neutral-300 shrink-0">Rip: <strong id="metro-rep-count" class="text-white">0</strong></span>
+      <!-- Cadence Metronome 2-1-3 -->
+      <div class="dock-box">
+        <div class="dock-top">
+          <span>CADENZA 2·1·3</span>
+          <span id="repCounter" style="color:var(--text)">RIP: 0</span>
         </div>
-        <div class="flex items-center gap-1.5 mt-1.5">
-          <button id="metro-toggle-btn" onclick="toggleMetronome()" class="btn-tactile flex-1 min-w-0 py-2 px-2 rounded-xl bg-[#95D600] text-black font-black text-[length:var(--fs-sm)] flex items-center justify-center gap-1">
-            <span id="metro-btn-text" class="truncate">Avvia</span>
-            <span id="metro-sec-badge" class="hidden shrink-0 font-mono bg-black/20 px-1.5 rounded text-[length:var(--fs-micro)]">2s</span>
-          </button>
-          <button onclick="resetMetronome()" class="btn-tactile shrink-0 py-2 px-2.5 rounded-xl bg-[#1c1c1c] hover:bg-[#262626] border border-[#2a2a2a] text-neutral-200 font-bold text-[length:var(--fs-base)] leading-none" title="Azzera ripetizioni">
-            ↺
-          </button>
+        <div id="cadencePhase" class="dock-display" style="font-size:16px; padding:4px 0;">FERMO</div>
+        <div class="dock-btns">
+          <button id="cadenceBtn" class="d-btn primary" onclick="toggleCadence()">▶ Avvia</button>
+          <button class="d-btn" onclick="resetCadence()">Azzer</button>
         </div>
       </div>
-
     </div>
   </div>
 
-  <!-- MODALE 1: REGOLE E SPIEGAZIONI COACH -->
-  <div id="modal-rules" class="fixed inset-0 z-50 hidden bg-black/85 backdrop-blur-sm flex items-end sm:items-center justify-center p-3">
-    <div class="bg-[#121212] border border-[#262626] rounded-3xl w-full max-w-lg max-h-[85vh] overflow-y-auto p-4 sm:p-5 shadow-2xl space-y-4">
-      <div class="flex items-center justify-between border-b border-[#1e1e1e] pb-3">
-        <h3 class="text-[length:var(--fs-ex-title)] font-black text-white">Guida Rapida & Regole Coach</h3>
-        <button onclick="closeModal('modal-rules')" class="p-2 rounded-xl bg-[#1e1e1e] text-neutral-200 hover:text-white text-[length:var(--fs-base)] font-bold">✕</button>
+  <!-- Modal Settings & Criteria -->
+  <div id="settingsModal" class="modal-backdrop" onclick="if(event.target===this) closeModal()">
+    <div class="modal">
+      <h3>Regole & Gestione Dati</h3>
+      <div style="font-size: var(--fs-small); color: #e4e4e7; margin-bottom: 14px; line-height: 1.5;">
+        <p style="margin:0 0 8px 0;"><strong>1. Peso Iniziale:</strong> Scegli un carico con cui chiudi le ripetizioni minime sentendo di averne ancora <strong>2–3 pulite</strong> (2–3 RIR).</p>
+        <p style="margin:0 0 8px 0;"><strong>2. Doppia Progressione:</strong> Aumenta prima le ripetizioni. Quando chiudi il massimo previsto in <strong>entrambe le serie</strong> con 3 sec di discesa, aumenta il peso (+1/+2.5 kg parte alta, +2.5/+5 kg gambe) e riparti dal minimo.</p>
+        <p style="margin:0;"><strong>3. Giorni Wegovy / Stanchezza:</strong> Se hai nausea o stanchezza da cambio dose, riduci i pesi del 10–15% e cura solo la tecnica.</p>
       </div>
-
-      <div class="space-y-3 text-[length:var(--fs-guide)] text-neutral-200 leading-relaxed">
-        <div class="p-3 rounded-2xl bg-[#0a0a0a] border border-[#1e1e1e]">
-          <h4 class="font-extrabold text-cyan-400 text-[length:var(--fs-base)] mb-1">1. Respirazione Anti-Valsalva (ACC 2026)</h4>
-          <p><strong>Mai trattenere il fiato</strong> sotto sforzo (evita picchi pressori). <strong>Espira</strong> dalla bocca mentre spingi o tiri e <strong>inspira</strong> dal naso mentre accompagni il peso indietro.</p>
-        </div>
-
-        <div class="p-3 rounded-2xl bg-[#0a0a0a] border border-[#1e1e1e]">
-          <h4 class="font-extrabold text-[#95D600] text-[length:var(--fs-base)] mb-1">2. Cadenza 2·1·3 (Controllo HIT)</h4>
-          <p><strong>2 secondi</strong> per spingere/tirare in modo fluido, <strong>1 secondo</strong> di fermo in contrazione, <strong>3 secondi</strong> per scendere frenando il peso. Mai far sbattere i dischi.</p>
-        </div>
-
-        <div class="p-3 rounded-2xl bg-[#0a0a0a] border border-[#1e1e1e]">
-          <h4 class="font-extrabold text-amber-400 text-[length:var(--fs-base)] mb-1">3. Margine RIR 1–2 (No Cedimento Assoluto)</h4>
-          <p>Fermati sentendo di avere ancora <strong>1 o 2 ripetizioni pulite</strong> di riserva prima che la tecnica si sporchi. Protegge tendini e articolazioni.</p>
-        </div>
-
-        <div class="p-3 rounded-2xl bg-[#0a0a0a] border border-[#1e1e1e]">
-          <h4 class="font-extrabold text-purple-400 text-[length:var(--fs-base)] mb-1">4. Doppia Progressione & Scarico</h4>
-          <p>Aumenta il carico (+1 / +2.5 kg) solo quando completi il tetto massimo di ripetizioni su <strong>entrambe le serie</strong>. Ogni 5–6 settimane attiva lo <strong>Scarico (-30%)</strong> per una settimana.</p>
-        </div>
-
-        <div class="p-3 rounded-2xl bg-[#0a0a0a] border border-[#1e1e1e]">
-          <h4 class="font-extrabold text-rose-400 text-[length:var(--fs-base)] mb-1">5. Scala di Borg 12–14 (Cardio)</h4>
-          <p>Intensità <em>"abbastanza dura"</em>: devi poter dire una frase breve di 4–5 parole, ma non riuscire a cantare o parlare di continuo.</p>
-        </div>
-      </div>
-
-      <button onclick="closeModal('modal-rules')" class="btn-tactile w-full py-3.5 rounded-xl bg-[#95D600] text-black font-black text-[length:var(--fs-base)]">
-        Ho capito
-      </button>
-    </div>
-  </div>
-
-  <!-- MODALE 2: BACKUP E RIPRISTINO DATI -->
-  <div id="modal-backup" class="fixed inset-0 z-50 hidden bg-black/85 backdrop-blur-sm flex items-end sm:items-center justify-center p-3">
-    <div class="bg-[#121212] border border-[#262626] rounded-3xl w-full max-w-lg p-4 sm:p-5 shadow-2xl space-y-4">
-      <div class="flex items-center justify-between border-b border-[#1e1e1e] pb-3">
-        <h3 class="text-[length:var(--fs-ex-title)] font-black text-white">Backup & Gestione Dati</h3>
-        <button onclick="closeModal('modal-backup')" class="p-2 rounded-xl bg-[#1e1e1e] text-neutral-200 hover:text-white text-[length:var(--fs-base)] font-bold">✕</button>
-      </div>
-
-      <p class="text-[length:var(--fs-sm)] text-neutral-300 leading-relaxed">
-        I tuoi carichi, ripetizioni e progressi sono salvati nella memoria locale del telefono. Esporta una copia JSON per sicurezza.
-      </p>
-
-      <div class="grid grid-cols-2 gap-2.5">
-        <button onclick="exportData()" class="btn-tactile py-3 px-3 rounded-xl bg-[#95D600] text-black font-black text-[length:var(--fs-sm)] flex items-center justify-center gap-1.5">
-          <span>⬇ Esporta JSON</span>
-        </button>
-        <button onclick="copyBackupText()" class="btn-tactile py-3 px-3 rounded-xl bg-[#1c1c1c] border border-[#2a2a2a] text-neutral-200 font-bold text-[length:var(--fs-sm)] flex items-center justify-center gap-1.5">
-          <span>📋 Copia Testo</span>
-        </button>
-      </div>
-
-      <div class="space-y-2 pt-2 border-t border-[#1e1e1e]">
-        <label class="block text-[length:var(--fs-sm)] font-bold text-neutral-200">Ripristina da JSON (incolla qui sotto):</label>
-        <textarea id="import-json-area" rows="3" placeholder='{"completedCount": 3, ...}' class="w-full rounded-xl bg-[#0a0a0a] border border-[#1e1e1e] p-2.5 text-[length:var(--fs-sm)] text-neutral-200 font-mono focus:outline-none focus:border-[#95D600]"></textarea>
-        <button onclick="importData()" class="btn-tactile w-full py-3 rounded-xl bg-cyan-500/20 border border-cyan-500/40 text-cyan-300 font-extrabold text-[length:var(--fs-sm)]">
-          Ripristina Dati Incollati
-        </button>
-      </div>
-
-      <div class="pt-2 border-t border-[#1e1e1e] flex items-center justify-between gap-2">
-        <span class="text-[length:var(--fs-sm)] text-neutral-400">Statistiche: <strong id="stats-summary" class="text-white">0 sedute</strong></span>
-        <button id="btn-reset-all" onclick="confirmResetAll()" class="text-[length:var(--fs-sm)] font-bold text-rose-400 hover:text-rose-300 underline">
-          Azzera tutto
-        </button>
-      </div>
+      <button class="modal-btn" onclick="exportData()">📤 Esporta Backup Dati (JSON)</button>
+      <button class="modal-btn" onclick="importData()">📥 Importa Backup Dati</button>
+      <button class="modal-btn" style="color:#f87171; border-color:rgba(239,68,68,0.4);" onclick="resetAllData()">🗑️ Azzera Tutto</button>
+      <button class="modal-btn" style="background:var(--neon); color:#050505; border:none;" onclick="closeModal()">Chiudi</button>
     </div>
   </div>
 
   <script>
-    /* ==========================================================================
-       1. DATABASE COMPLETO PROTOCOLLO HIT + ACC/ACSM 2026
-       ========================================================================== */
-    const WORKOUT_DATA = {
-      A: {
-        title: "Seduta A",
-        pairs: [
-          {
-            pairLabel: "Coppia 1 • Gambe",
-            restSeconds: 60,
-            restText: "Recupero 60s tra 1A e 1B",
-            exercises: [
-              {
-                id: "A_1A",
-                code: "1A",
-                name: "Leg Press",
-                type: "Macchina",
-                targetText: "2 × 10–12 rip",
-                minReps: 10,
-                maxReps: 12,
-                defaultWeight: 40,
-                weightStep: 2.5,
-                setup: "Schienale a 90° ginocchia, piedi larghezza spalle.",
-                execution: "Spingi espirando senza bloccare ginocchia; scendi in 3s inspirando con bacino incollato.",
-                error: "Alzare il bacino/lombare a fine discesa."
-              },
-              {
-                id: "A_1B",
-                code: "1B",
-                name: "Seated Leg Curl",
-                type: "Macchina",
-                targetText: "2 × 10–12 rip",
-                minReps: 10,
-                maxReps: 12,
-                defaultWeight: 25,
-                weightStep: 2.5,
-                setup: "Perno allineato al centro ginocchio, rullo sopra talloni.",
-                execution: "Piega portando talloni sotto sedile espirando, fermo 1s, risali frenando 3s.",
-                error: "Slanciarsi in avanti con la schiena."
-              }
-            ]
-          },
-          {
-            pairLabel: "Coppia 2 • Torace e Dorso",
-            restSeconds: 60,
-            restText: "Recupero 60s tra 2A e 2B",
-            exercises: [
-              {
-                id: "A_2A",
-                code: "2A",
-                name: "Chest Press",
-                type: "Macchina",
-                targetText: "2 × 8–10 rip",
-                minReps: 8,
-                maxReps: 10,
-                defaultWeight: 25,
-                weightStep: 2.5,
-                setup: "Maniglie all'altezza del centro petto, scapole addotte.",
-                execution: "Spingi espirando senza bloccare gomiti; torna in 3s inspirando.",
-                error: "Alzare le spalle verso le orecchie."
-              },
-              {
-                id: "A_2B",
-                code: "2B",
-                name: "Rematore con Manubrio su Panca",
-                type: "Peso Libero",
-                targetText: "2 × 8–10 rip/lato",
-                minReps: 8,
-                maxReps: 10,
-                defaultWeight: 10,
-                weightStep: 1,
-                setup: "Ginocchio e mano su panca, schiena piatta parallela al suolo.",
-                execution: "Tira manubrio verso l'anca espirando, fermo 1s, scendi in 3s.",
-                error: "Ruotare il busto o tirare verso la spalla."
-              }
-            ]
-          },
-          {
-            pairLabel: "Coppia 3 • Spalle, Cuffia & Core",
-            restSeconds: 45,
-            restText: "Recupero 45–60s tra 3A e 3B",
-            exercises: [
-              {
-                id: "A_3A",
-                code: "3A",
-                name: "Face Pull ai Cavi",
-                type: "Cavo",
-                targetText: "2 × 12–15 rip",
-                minReps: 12,
-                maxReps: 15,
-                defaultWeight: 10,
-                weightStep: 2.5,
-                setup: "Carrucola altezza viso con corda, 2 passi indietro.",
-                execution: "Tira verso fronte allargando gomiti e ruotando polsi indietro espirando; torna in 3s.",
-                error: "Inarcare la schiena o usare slancio."
-              },
-              {
-                id: "A_3B",
-                code: "3B",
-                name: "Plank + Pushdown Tricipiti",
-                type: "Superserie",
-                targetText: "2 × 30–40s + 12–15 rip",
-                minReps: 12,
-                maxReps: 15,
-                defaultWeight: 12.5,
-                weightStep: 2.5,
-                setup: "Plank gomiti sotto spalle; poi cavo alto con barra/corda, gomiti ai fianchi.",
-                execution: "Plank respirando regolare; poi estendi avambracci espirando, risali in 3s.",
-                error: "Trattenere il fiato (Valsalva) o muovere i gomiti."
-              }
-            ]
-          }
-        ]
-      },
-      B: {
-        title: "Seduta B",
-        pairs: [
-          {
-            pairLabel: "Coppia 1 • Gambe e Catena Posteriore",
-            restSeconds: 60,
-            restText: "Recupero 60s tra 1A e 1B",
-            exercises: [
-              {
-                id: "B_1A",
-                code: "1A",
-                name: "Goblet Squat con Manubrio",
-                type: "Peso Libero",
-                targetText: "2 × 10–12 rip",
-                minReps: 10,
-                maxReps: 12,
-                defaultWeight: 12,
-                weightStep: 2,
-                setup: "Manubrio verticale al petto, piedi poco più larghi spalle.",
-                execution: "Scendi in 3s inspirando con petto alto e talloni a terra; risali espirando.",
-                error: "Alzare i talloni o chiudere ginocchia in dentro."
-              },
-              {
-                id: "B_1B",
-                code: "1B",
-                name: "Lying Leg Curl",
-                type: "Macchina",
-                targetText: "2 × 10–12 rip",
-                minReps: 10,
-                maxReps: 12,
-                defaultWeight: 20,
-                weightStep: 2.5,
-                setup: "Prono con rotule appena fuori dal bordo panca, bacino premuto.",
-                execution: "Talloni ai glutei espirando, fermo 1s, scendi in 3s.",
-                error: "Inarcare la bassa schiena sollevando il bacino."
-              }
-            ]
-          },
-          {
-            pairLabel: "Coppia 2 • Spinta e Tirata Verticale",
-            restSeconds: 60,
-            restText: "Recupero 60s tra 2A e 2B",
-            exercises: [
-              {
-                id: "B_2A",
-                code: "2A",
-                name: "Spinte Spalle Manubri Seduto",
-                type: "Peso Libero",
-                targetText: "2 × 8–10 rip",
-                minReps: 8,
-                maxReps: 10,
-                defaultWeight: 8,
-                weightStep: 1,
-                setup: "Schienale a 75–80°, manubri altezza orecchie, gomiti leggermente avanti.",
-                execution: "Spingi in alto espirando senza bloccare gomiti; scendi in 3s inspirando.",
-                error: "Inarcare zona lombare in spinta."
-              },
-              {
-                id: "B_2B",
-                code: "2B",
-                name: "Lat Pulldown",
-                type: "Macchina",
-                targetText: "2 × 8–12 rip",
-                minReps: 8,
-                maxReps: 12,
-                defaultWeight: 30,
-                weightStep: 2.5,
-                setup: "Cosce bloccate sotto cuscino, presa poco più larga spalle.",
-                execution: "Tira sbarra allo sterno alto espirando, gomiti in basso; risali in 3s.",
-                error: "Dondolare indietro con il busto."
-              }
-            ]
-          },
-          {
-            pairLabel: "Coppia 3 • Funzionale Trasporto & Braccia",
-            restSeconds: 60,
-            restText: "Recupero 60s tra 3A e 3B",
-            exercises: [
-              {
-                id: "B_3A",
-                code: "3A",
-                name: "Farmer's Carry",
-                type: "Peso Libero",
-                targetText: "2 × 30–40s",
-                minReps: 30,
-                maxReps: 40,
-                isTimed: true,
-                defaultWeight: 14,
-                weightStep: 2,
-                setup: "Due manubri pesanti lungo i fianchi, spalle indietro, addome attivo.",
-                execution: "Cammina a passi brevi e stabili respirando continuo.",
-                error: "Oscillare lateralmente o trattenere il fiato."
-              },
-              {
-                id: "B_3B",
-                code: "3B",
-                name: "Curl Bicipiti + Calf Raise",
-                type: "Superserie",
-                targetText: "2 × 10–12 + 12–15 rip",
-                minReps: 10,
-                maxReps: 12,
-                defaultWeight: 8,
-                weightStep: 1,
-                setup: "Manubri lungo fianchi; poi polpacci su macchina o scalino.",
-                execution: "Curl ruotando palmi espirando, discesa 3s; poi spinta sulle punte, fermo 1s, discesa 3s.",
-                error: "Oscillare con la schiena o rimbalzare in basso."
-              }
-            ]
-          }
-        ]
-      }
+    // --- WORKOUT DATA ---
+    const WORKOUTS = {
+      A: [
+        {
+          pair: "Coppia 1 · Gambe (Alterna 1A e 1B · Pausa 60s)",
+          items: [
+            {
+              id: "A_1A",
+              code: "1A",
+              name: "Leg Press (Macchina)",
+              sets: 2,
+              minReps: 10,
+              maxReps: 12,
+              stepKg: 2.5,
+              defaultKg: 40,
+              setup: "Schienale regolato per avere 90° alle ginocchia in partenza. Piedi larghezza spalle sulla pedana, punte leggermente in fuori.",
+              exec: "Spingi la pedana espirando senza bloccare del tutto le ginocchia a fine corsa. Scendi in 3 secondi inspirando fino a portare le cosce vicino al busto.",
+              err: "Alzare il sedere o staccare la bassa schiena dallo schienale a fine discesa."
+            },
+            {
+              id: "A_1B",
+              code: "1B",
+              name: "Seated Leg Curl (Femorali Seduto)",
+              sets: 2,
+              minReps: 10,
+              maxReps: 12,
+              stepKg: 2.5,
+              defaultKg: 25,
+              setup: "Allinea il perno della macchina con il centro del ginocchio. Cuscino ben saldo sulle cosce, rullo appena sopra i talloni.",
+              exec: "Piega le gambe portando i talloni sotto il sedile espirando. Ferma 1 secondo, poi risali frenando il peso per 3 secondi.",
+              err: "Slanciarsi in avanti con il busto o far sbattere i pesi a fine corsa."
+            }
+          ]
+        },
+        {
+          pair: "Coppia 2 · Torace & Dorso (Alterna 2A e 2B · Pausa 60s)",
+          items: [
+            {
+              id: "A_2A",
+              code: "2A",
+              name: "Chest Press (Macchina)",
+              sets: 2,
+              minReps: 8,
+              maxReps: 10,
+              stepKg: 2.5,
+              defaultKg: 25,
+              setup: "Sedile regolato con le maniglie all'altezza del centro del petto (mai alle spalle). Scapole appoggiate, spalle basse.",
+              exec: "Spingi in avanti espirando fino a quasi distendere i gomiti. Torna indietro in 3 secondi inspirando.",
+              err: "Alzare le spalle verso le orecchie durante la spinta o staccare le scapole."
+            },
+            {
+              id: "A_2B",
+              code: "2B",
+              name: "Rematore con Manubrio su Panca",
+              sets: 2,
+              minReps: 8,
+              maxReps: 10,
+              stepKg: 1,
+              defaultKg: 12,
+              setup: "Ginocchio e mano dello stesso lato appoggiati su panca piana, schiena piatta parallela al suolo, altro piede ben piantato a terra.",
+              exec: "Tira il manubrio verso l'anca (non verso la spalla) con gomito vicino al fianco espirando. Ferma 1 sec in alto, scendi in 3 secondi.",
+              err: "Ruotare il busto o dare strattoni con la zona lombare per alzare il peso."
+            }
+          ]
+        },
+        {
+          pair: "Coppia 3 · Spalle, Cuffia & Core (Alterna 3A e 3B · Pausa 45–60s)",
+          items: [
+            {
+              id: "A_3A",
+              code: "3A",
+              name: "Face Pull ai Cavi (Cuffia Rotatori)",
+              sets: 2,
+              minReps: 12,
+              maxReps: 15,
+              stepKg: 1.25,
+              defaultKg: 10,
+              setup: "Carrucola all'altezza del viso con corda doppia. Afferra con i pollici rivolti verso di te, due passi indietro, braccia tese.",
+              exec: "Tira la corda verso la fronte allargando i gomiti e ruotando indietro i polsi (mani ai lati delle orecchie) espirando. Torna in 3 secondi.",
+              err: "Tirare verso il petto o inarcare la schiena all'indietro."
+            },
+            {
+              id: "A_3B",
+              code: "3B",
+              name: "Plank (35s) + Pushdown Tricipiti Cavo",
+              sets: 2,
+              minReps: 12,
+              maxReps: 15,
+              stepKg: 1.25,
+              defaultKg: 15,
+              setup: "Prima 35s di Plank (gomiti sotto le spalle, corpo teso, respiro regolare). Subito dopo al cavo alto con barra/corda e gomiti ai fianchi.",
+              exec: "Al cavo, estendi completamente gli avambracci verso il basso espirando. Risali con gli avambracci in 3 secondi tenendo i gomiti immobili.",
+              err: "Trattenere il fiato nel Plank o muovere i gomiti avanti e indietro nel Pushdown."
+            }
+          ]
+        }
+      ],
+      B: [
+        {
+          pair: "Coppia 1 · Gambe Funzionali (Alterna 1A e 1B · Pausa 60s)",
+          items: [
+            {
+              id: "B_1A",
+              code: "1A",
+              name: "Goblet Squat con Manubrio",
+              sets: 2,
+              minReps: 10,
+              maxReps: 12,
+              stepKg: 2,
+              defaultKg: 12,
+              setup: "Tieni un manubrio verticale davanti al petto con entrambe le mani sotto il disco superiore. Piedi poco più larghi delle spalle.",
+              exec: "Scendi in 3 secondi inspirando piegando ginocchia e anche con petto alto e talloni a terra. Risali spingendo sui talloni ed espirando.",
+              err: "Sollevare i talloni da terra o far cadere le ginocchia verso l'interno."
+            },
+            {
+              id: "B_1B",
+              code: "1B",
+              name: "Lying Leg Curl (Femorali Sdraiato)",
+              sets: 2,
+              minReps: 10,
+              maxReps: 12,
+              stepKg: 2.5,
+              defaultKg: 20,
+              setup: "Sdraiati a pancia in giù con le rotule appena fuori dal bordo inferiore della panca e il rullo appoggiato dietro le caviglie.",
+              exec: "Porta i talloni verso i glutei espirando in 1–2 sec, ferma 1 secondo, ridiscendi in 3 secondi mantenendo il bacino premuto sul cuscino.",
+              err: "Sollevare il bacino inarcando la zona lombare mentre pieghi le gambe."
+            }
+          ]
+        },
+        {
+          pair: "Coppia 2 · Spinta & Tirata Verticale (Alterna 2A e 2B · Pausa 60s)",
+          items: [
+            {
+              id: "B_2A",
+              code: "2A",
+              name: "Spinte Spalle Manubri (Seduto)",
+              sets: 2,
+              minReps: 8,
+              maxReps: 10,
+              stepKg: 1,
+              defaultKg: 8,
+              setup: "Panca con schienale a 75–80°. Manubri all'altezza delle orecchie, palmi in avanti, gomiti leggermente più avanti rispetto al busto.",
+              exec: "Spingi i manubri verso l'alto espirando senza farli sbattere e senza bloccare i gomiti. Scendi in 3 secondi inspirando fino alle orecchie.",
+              err: "Inarcare la bassa schiena staccandola dallo schienale durante la spinta."
+            },
+            {
+              id: "B_2B",
+              code: "2B",
+              name: "Lat Pulldown (Tirata Verticale)",
+              sets: 2,
+              minReps: 8,
+              maxReps: 12,
+              stepKg: 2.5,
+              defaultKg: 30,
+              setup: "Blocca bene le cosce sotto il cuscino. Presa poco più larga delle spalle (o maniglia neutra triangolare). Petto aperto verso l'alto.",
+              exec: "Tira la sbarra fino alla parte alta dello sterno portando i gomiti verso il basso ed espirando. Risali in 3 secondi inspirando.",
+              err: "Dondolare eccessivamente indietro con la schiena o tirare la sbarra dietro la nuca."
+            }
+          ]
+        },
+        {
+          pair: "Coppia 3 · Trasporto & Braccia (Alterna 3A e 3B · Pausa 60s)",
+          items: [
+            {
+              id: "B_3A",
+              code: "3A",
+              name: "Farmer's Carry (Camminata con Pesi)",
+              sets: 2,
+              minReps: 30,
+              maxReps: 40,
+              unitLabel: "sec/m",
+              stepKg: 2,
+              defaultKg: 14,
+              setup: "Afferra due manubri pesanti lungo i fianchi. Spalle indietro e basse, addome contratto, sguardo dritto avanti.",
+              exec: "Cammina a passi brevi e controllati per 30–40 secondi/metri mantenendo il busto immobile e respirando in modo fluido.",
+              err: "Oscillare lateralmente con le spalle o trattenere il fiato mentre cammini."
+            },
+            {
+              id: "B_3B",
+              code: "3B",
+              name: "Curl Bicipiti Manubri + Calf Raise",
+              sets: 2,
+              minReps: 10,
+              maxReps: 12,
+              stepKg: 1,
+              defaultKg: 8,
+              setup: "In piedi, manubri ai fianchi. Subito dopo il curl, passa alla macchina polpacci (o gradino) con avampiedi in appoggio.",
+              exec: "Curl: piega i gomiti ruotando i palmi in alto ed espirando, scendi in 3 sec. Polpacci: spingi sulle punte espirando, ferma 1s, scendi in 3s.",
+              err: "Slanciare la schiena nel curl o rimbalzare velocemente sui polpacci."
+            }
+          ]
+        }
+      ]
     };
 
-    /* ==========================================================================
-       2. STATO APPLICAZIONE E LOCALSTORAGE
-       ========================================================================== */
-    const STORAGE_KEY = 'gym_hit_213_state_v1';
-
-    let appState = {
-      currentSession: 'A',
-      lastCompletedSession: null,
+    // --- STATE ---
+    const STORAGE_KEY = "gym_hit_2026_state_v1";
+    let state = {
+      currentTab: "A",
       completedCount: 0,
       deloadMode: false,
-      mobility: [false, false, false],
-      exercises: {}
+      mobility: { mob1: false, mob2: false, mob3: false },
+      logs: {}
     };
 
-    function initExerciseDefaults() {
-      ['A', 'B'].forEach(sess => {
-        WORKOUT_DATA[sess].pairs.forEach(pair => {
-          pair.exercises.forEach(ex => {
-            if (!appState.exercises[ex.id]) {
-              appState.exercises[ex.id] = {
-                s1Weight: ex.defaultWeight,
-                s1Reps: ex.minReps,
-                s2Weight: ex.defaultWeight,
-                s2Reps: ex.minReps,
-                done1: false,
-                done2: false
+    function loadState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          state = { ...state, ...parsed };
+        }
+      } catch (e) { console.error(e); }
+
+      // Initialize missing exercise logs
+      ["A", "B"].forEach(w => {
+        WORKOUTS[w].forEach(group => {
+          group.items.forEach(ex => {
+            if (!state.logs[ex.id]) {
+              state.logs[ex.id] = {
+                s1: { kg: ex.defaultKg, reps: ex.minReps },
+                s2: { kg: ex.defaultKg, reps: ex.minReps }
               };
             }
           });
@@ -670,44 +1096,177 @@
       });
     }
 
-    function loadState() {
-      try {
-        const saved = localStorage.getItem(STORAGE_KEY);
-        if (saved) {
-          appState = { ...appState, ...JSON.parse(saved) };
-        }
-      } catch (e) {
-        console.error("Errore lettura localStorage:", e);
-      }
-      initExerciseDefaults();
-    }
-
     function saveState() {
       try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(appState));
-      } catch (e) {
-        console.error("Errore salvataggio localStorage:", e);
-      }
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      } catch (e) { console.error(e); }
     }
 
-    /* ==========================================================================
-       3. AUDIO SINTETICO (WEB AUDIO API) & VIBRAZIONE
-       ========================================================================== */
-    let audioCtx = null;
+    function showToast(msg) {
+      const t = document.getElementById("toast");
+      t.textContent = msg;
+      t.classList.add("show");
+      setTimeout(() => t.classList.remove("show"), 2200);
+    }
 
-    function playTone(freq = 520, duration = 0.12, type = 'sine', volume = 0.25) {
+    // --- UI RENDER ---
+    function renderAll() {
+      // Week & Deload UI
+      const weekNum = Math.floor(state.completedCount / 3) + 1;
+      document.getElementById("weekBadge").textContent = `Settimana ${weekNum} · Sedute: ${state.completedCount}`;
+      
+      const deloadBtn = document.getElementById("deloadBtn");
+      deloadBtn.textContent = state.deloadMode ? "Scarico -30%: ON" : "Scarico -30%: OFF";
+      deloadBtn.classList.toggle("active", state.deloadMode);
+
+      const alertBox = document.getElementById("deloadAlert");
+      if (state.completedCount >= 15 && !state.deloadMode) {
+        alertBox.classList.add("show");
+      } else {
+        alertBox.classList.remove("show");
+      }
+
+      // Tabs
+      document.getElementById("tabA").classList.toggle("active", state.currentTab === "A");
+      document.getElementById("tabB").classList.toggle("active", state.currentTab === "B");
+
+      // Mobility
+      document.getElementById("mob1").checked = !!state.mobility.mob1;
+      document.getElementById("mob2").checked = !!state.mobility.mob2;
+      document.getElementById("mob3").checked = !!state.mobility.mob3;
+
+      // Exercises
+      const container = document.getElementById("exercisesContainer");
+      container.innerHTML = "";
+
+      WORKOUTS[state.currentTab].forEach(group => {
+        const pLabel = document.createElement("div");
+        pLabel.className = "pair-label";
+        pLabel.textContent = group.pair;
+        container.appendChild(pLabel);
+
+        group.items.forEach(ex => {
+          const log = state.logs[ex.id];
+          const readyToProgress = !state.deloadMode && (log.s1.reps >= ex.maxReps && log.s2.reps >= ex.maxReps);
+          const unit = ex.unitLabel || "rip";
+
+          const card = document.createElement("div");
+          card.className = "ex-card";
+          card.innerHTML = `
+            <div class="ex-top">
+              <div style="min-width:0;">
+                <h3 class="ex-name"><span class="ex-code">${ex.code}</span>${ex.name}</h3>
+                <div class="ex-meta">Target: <strong>${ex.sets} serie × ${ex.minReps}–${ex.maxReps} ${unit}</strong> · Tempo 2·1·3</div>
+              </div>
+              <button class="guide-btn" onclick="toggleGuide('${ex.id}')">📖 Tecnica</button>
+            </div>
+
+            <div id="guide_${ex.id}" class="guide-box">
+              <p><span class="g-setup">SETUP:</span> ${ex.setup}</p>
+              <p><span class="g-exec">ESECUZIONE:</span> ${ex.exec}</p>
+              <p><span class="g-err">ERRORE DA EVITARE:</span> ${ex.err}</p>
+            </div>
+
+            <div class="prog-banner ${readyToProgress ? 'show' : ''}">
+              🚀 Hai chiuso ${ex.maxReps}/${ex.maxReps} ${unit}! Prossima seduta: +${ex.stepKg} kg e riparti da ${ex.minReps} ${unit}.
+            </div>
+
+            <div class="sets-wrap">
+              ${renderSetRow(ex, 1, log.s1, unit)}
+              ${renderSetRow(ex, 2, log.s2, unit)}
+            </div>
+          `;
+          container.appendChild(card);
+        });
+      });
+    }
+
+    function renderSetRow(ex, setNum, setData, unit) {
+      const deloadKg = (Math.round((setData.kg * 0.7) * 2) / 2).toFixed(1).replace(/\.0$/, "");
+      return `
+        <div class="set-row">
+          <div class="set-head">
+            <span>SERIE ${setNum} ${setNum === 2 ? '(0–1 RIR)' : '(1–2 RIR)'}</span>
+            ${state.deloadMode ? `<span class="deload-target">Usa scarico: ${deloadKg} kg</span>` : ''}
+          </div>
+          <div class="controls-grid">
+            <div class="stepper-group">
+              <div class="stepper-label">Peso (kg)</div>
+              <div class="stepper-controls">
+                <button class="step-btn" onclick="updateLog('${ex.id}', ${setNum}, 'kg', -${ex.stepKg})">−</button>
+                <div class="step-val">${setData.kg}</div>
+                <button class="step-btn" onclick="updateLog('${ex.id}', ${setNum}, 'kg', ${ex.stepKg})">+</button>
+              </div>
+            </div>
+            <div class="stepper-group">
+              <div class="stepper-label">${unit === 'rip' ? 'Ripetizioni' : 'Secondi/Metri'}</div>
+              <div class="stepper-controls">
+                <button class="step-btn" onclick="updateLog('${ex.id}', ${setNum}, 'reps', ${unit === 'rip' ? -1 : -5})">−</button>
+                <div class="step-val">${setData.reps}</div>
+                <button class="step-btn" onclick="updateLog('${ex.id}', ${setNum}, 'reps', ${unit === 'rip' ? 1 : 5})">+</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function updateLog(exId, setNum, field, delta) {
+      const key = setNum === 1 ? "s1" : "s2";
+      let val = state.logs[exId][key][field] + delta;
+      if (val < 0) val = 0;
+      val = Math.round(val * 100) / 100;
+      state.logs[exId][key][field] = val;
+      saveState();
+      renderAll();
+    }
+
+    function toggleGuide(exId) {
+      const el = document.getElementById(`guide_${exId}`);
+      if (el) el.classList.toggle("open");
+    }
+
+    function selectWorkout(tab) {
+      state.currentTab = tab;
+      saveState();
+      renderAll();
+    }
+
+    function toggleDeload() {
+      state.deloadMode = !state.deloadMode;
+      saveState();
+      renderAll();
+      showToast(state.deloadMode ? "Scarico -30% attivato" : "Scarico disattivato");
+    }
+
+    function saveMobility() {
+      state.mobility.mob1 = document.getElementById("mob1").checked;
+      state.mobility.mob2 = document.getElementById("mob2").checked;
+      state.mobility.mob3 = document.getElementById("mob3").checked;
+      saveState();
+    }
+
+    function completeWorkout() {
+      state.completedCount += 1;
+      state.mobility = { mob1: false, mob2: false, mob3: false };
+      state.currentTab = state.currentTab === "A" ? "B" : "A";
+      saveState();
+      renderAll();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      showToast(`Seduta registrata! Prossima: Seduta ${state.currentTab}`);
+    }
+
+    // --- AUDIO ENGINE (Web Audio API) ---
+    let audioCtx = null;
+    function beep(freq = 600, duration = 0.08, type = "sine") {
       try {
-        if (!audioCtx) {
-          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        }
-        if (audioCtx.state === 'suspended') {
-          audioCtx.resume();
-        }
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx.state === "suspended") audioCtx.resume();
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
         osc.type = type;
-        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-        gain.gain.setValueAtTime(volume, audioCtx.currentTime);
+        osc.frequency.value = freq;
+        gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
         gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
         osc.connect(gain);
         gain.connect(audioCtx.destination);
@@ -716,749 +1275,228 @@
       } catch (e) {}
     }
 
-    function triggerVibration(pattern = [100]) {
-      if ('vibrate' in navigator) {
-        try { navigator.vibrate(pattern); } catch (e) {}
-      }
-    }
-
-    /* ==========================================================================
-       4. TOAST E MODALI
-       ========================================================================== */
-    function showToast(message, type = 'info') {
-      const container = document.getElementById('toast-container');
-      const el = document.createElement('div');
-      const styles = {
-        success: 'bg-[#121212]/95 border-[#95D600] text-[#95D600]',
-        warning: 'bg-[#121212]/95 border-amber-500 text-amber-300',
-        info: 'bg-[#121212]/95 border-cyan-400 text-white'
-      };
-      el.className = `px-4 py-3 rounded-2xl border shadow-2xl text-[length:var(--fs-sm)] font-bold backdrop-blur-md transition-all duration-300 ${styles[type] || styles.info}`;
-      el.textContent = message;
-      container.appendChild(el);
-      setTimeout(() => {
-        el.style.opacity = '0';
-        el.style.transform = 'translateY(-8px)';
-        setTimeout(() => el.remove(), 300);
-      }, 3200);
-    }
-
-    function openModal(id) {
-      if (id === 'modal-backup') {
-        document.getElementById('stats-summary').textContent = `${appState.completedCount} sedute completate`;
-      }
-      document.getElementById(id).classList.remove('hidden');
-    }
-
-    function closeModal(id) {
-      document.getElementById(id).classList.add('hidden');
-    }
-
-    /* ==========================================================================
-       5. SCREEN WAKE LOCK
-       ========================================================================== */
-    let wakeLockSentinel = null;
-    let wakeLockDesired = false;
-
-    async function toggleWakeLock() {
-      wakeLockDesired = !wakeLockDesired;
-      if (wakeLockDesired) {
-        await requestWakeLock();
-      } else {
-        releaseWakeLock();
-      }
-    }
-
-    async function requestWakeLock() {
-      if ('wakeLock' in navigator) {
-        try {
-          wakeLockSentinel = await navigator.wakeLock.request('screen');
-          updateWakeLockUI(true);
-          showToast("Schermo bloccato acceso per l'allenamento", "success");
-          wakeLockSentinel.addEventListener('release', () => {
-            if (!wakeLockDesired) updateWakeLockUI(false);
-          });
-        } catch (err) {
-          wakeLockDesired = false;
-          updateWakeLockUI(false);
-          showToast("Impossibile bloccare lo schermo (risparmio energetico attivo?)", "warning");
-        }
-      } else {
-        wakeLockDesired = false;
-        updateWakeLockUI(false);
-        showToast("Blocco schermo automatico non supportato da questo browser", "warning");
-      }
-    }
-
-    function releaseWakeLock() {
-      if (wakeLockSentinel) {
-        wakeLockSentinel.release();
-        wakeLockSentinel = null;
-      }
-      updateWakeLockUI(false);
-    }
-
-    function updateWakeLockUI(active) {
-      const btn = document.getElementById('btn-wakelock');
-      const dot = document.getElementById('wakelock-dot');
-      const status = document.getElementById('wakelock-status');
-      if (active) {
-        btn.className = "btn-tactile min-w-0 flex items-center justify-between px-3 py-2 rounded-xl border text-[length:var(--fs-sm)] font-bold transition-all bg-cyan-500/15 border-cyan-500/50 text-cyan-200";
-        dot.className = "w-2.5 h-2.5 rounded-full bg-cyan-400 animate-pulse shrink-0";
-        status.className = "text-[length:var(--fs-micro)] font-black uppercase text-cyan-300 shrink-0 ml-1";
-        status.textContent = "ON";
-      } else {
-        btn.className = "btn-tactile min-w-0 flex items-center justify-between px-3 py-2 rounded-xl border text-[length:var(--fs-sm)] font-bold transition-all bg-[#121212] border-[#1e1e1e] text-neutral-300";
-        dot.className = "w-2.5 h-2.5 rounded-full bg-neutral-600 shrink-0";
-        status.className = "text-[length:var(--fs-micro)] font-black uppercase text-neutral-500 shrink-0 ml-1";
-        status.textContent = "OFF";
-      }
-    }
-
-    document.addEventListener('visibilitychange', async () => {
-      if (wakeLockDesired && document.visibilityState === 'visible') {
-        await requestWakeLock();
-      }
-    });
-
-    /* ==========================================================================
-       6. LOGICA ROTAZIONE, SCARICO E RENDERING SCHEDA
-       ========================================================================== */
-    function getRecommendedSession() {
-      if (!appState.lastCompletedSession) return 'A';
-      return appState.lastCompletedSession === 'A' ? 'B' : 'A';
-    }
-
-    function getCurrentWeek() {
-      return Math.floor(appState.completedCount / 3) + 1;
-    }
-
-    function calculateDeloadWeight(weight) {
-      return Math.round((weight * 0.7) * 2) / 2;
-    }
-
-    function updateHeaderAndDeloadUI() {
-      const rec = getRecommendedSession();
-      const week = getCurrentWeek();
-
-      document.getElementById('header-subtitle').innerHTML =
-        `Consigliata: <strong class="text-[#95D600]">Seduta ${rec}</strong> • Sett. ${week} (${appState.completedCount} sedute)`;
-
-      document.getElementById('badge-rec-A').classList.toggle('hidden', rec !== 'A');
-      document.getElementById('badge-rec-B').classList.toggle('hidden', rec !== 'B');
-
-      const tabA = document.getElementById('tab-A');
-      const tabB = document.getElementById('tab-B');
-      if (appState.currentSession === 'A') {
-        tabA.className = "btn-tactile min-w-0 py-2.5 px-2 rounded-xl text-[length:var(--fs-base)] font-black transition-all flex items-center justify-center gap-1.5 bg-[#95D600] text-black shadow";
-        tabB.className = "btn-tactile min-w-0 py-2.5 px-2 rounded-xl text-[length:var(--fs-base)] font-bold transition-all flex items-center justify-center gap-1.5 text-neutral-400 hover:text-white";
-      } else {
-        tabB.className = "btn-tactile min-w-0 py-2.5 px-2 rounded-xl text-[length:var(--fs-base)] font-black transition-all flex items-center justify-center gap-1.5 bg-[#95D600] text-black shadow";
-        tabA.className = "btn-tactile min-w-0 py-2.5 px-2 rounded-xl text-[length:var(--fs-base)] font-bold transition-all flex items-center justify-center gap-1.5 text-neutral-400 hover:text-white";
-      }
-
-      document.getElementById('btn-complete-label').textContent = `COMPLETA E SALVA SEDUTA ${appState.currentSession}`;
-
-      const btnDeload = document.getElementById('btn-deload');
-      const dotDeload = document.getElementById('deload-dot');
-      const statusDeload = document.getElementById('deload-status');
-
-      if (appState.deloadMode) {
-        btnDeload.className = "btn-tactile min-w-0 flex items-center justify-between px-3 py-2 rounded-xl border text-[length:var(--fs-sm)] font-bold transition-all bg-amber-500/20 border-amber-500/60 text-amber-200";
-        dotDeload.className = "w-2.5 h-2.5 rounded-full bg-amber-400 animate-pulse shrink-0";
-        statusDeload.className = "text-[length:var(--fs-micro)] font-black uppercase text-amber-300 shrink-0 ml-1";
-        statusDeload.textContent = "ON";
-      } else {
-        btnDeload.className = "btn-tactile min-w-0 flex items-center justify-between px-3 py-2 rounded-xl border text-[length:var(--fs-sm)] font-bold transition-all bg-[#121212] border-[#1e1e1e] text-neutral-300";
-        dotDeload.className = "w-2.5 h-2.5 rounded-full bg-neutral-600 shrink-0";
-        statusDeload.className = "text-[length:var(--fs-micro)] font-black uppercase text-neutral-500 shrink-0 ml-1";
-        statusDeload.textContent = "OFF";
-      }
-
-      const banner = document.getElementById('deload-alert-banner');
-      const isDeloadWeek = (week >= 6 && week % 6 === 0);
-      if (isDeloadWeek && !appState.deloadMode) {
-        banner.classList.remove('hidden');
-      } else {
-        banner.classList.add('hidden');
-      }
-    }
-
-    function renderMobility() {
-      let count = 0;
-      appState.mobility.forEach((checked, idx) => {
-        const cb = document.getElementById(`mob-${idx}`);
-        if (cb) cb.checked = checked;
-        if (checked) count++;
-      });
-      document.getElementById('mobility-progress-text').textContent = `${count}/3 completati • Prima dei pesi`;
-    }
-
-    function updateMobility(idx, val) {
-      appState.mobility[idx] = val;
-      saveState();
-      renderMobility();
-      if (val && appState.mobility.every(Boolean)) {
-        playTone(660, 0.15);
-        showToast("Mobilità completata! Sei pronto per la Coppia 1.", "success");
-      }
-    }
-
-    function renderWorkout() {
-      const container = document.getElementById('workout-container');
-      const sessionObj = WORKOUT_DATA[appState.currentSession];
-      container.innerHTML = '';
-
-      sessionObj.pairs.forEach(pair => {
-        const pairSection = document.createElement('section');
-        pairSection.className = 'space-y-3';
-
-        pairSection.innerHTML = `
-          <div class="flex items-center justify-between gap-2 px-1">
-            <h3 class="text-[length:var(--fs-sm)] font-extrabold uppercase tracking-wider text-neutral-300 truncate">${pair.pairLabel}</h3>
-            <button onclick="startRestTimer(${pair.restSeconds})" class="btn-tactile shrink-0 px-2.5 py-1 rounded-full bg-cyan-500/15 border border-cyan-500/30 text-cyan-300 text-[length:var(--fs-micro)] font-extrabold">
-              ⏱ ${pair.restText}
-            </button>
-          </div>
-        `;
-
-        pair.exercises.forEach(ex => {
-          const st = appState.exercises[ex.id];
-          const isReadyToProgress = (st.s1Reps >= ex.maxReps && st.s2Reps >= ex.maxReps && !appState.deloadMode);
-          const deloadW1 = calculateDeloadWeight(st.s1Weight);
-          const deloadW2 = calculateDeloadWeight(st.s2Weight);
-
-          const typeBadgeColor = ex.type === 'Macchina'
-            ? 'bg-cyan-500/15 text-cyan-300 border-cyan-500/30'
-            : ex.type === 'Peso Libero'
-              ? 'bg-[#95D600]/15 text-[#95D600] border-[#95D600]/30'
-              : 'bg-purple-500/15 text-purple-300 border-purple-500/30';
-
-          const unitLabel = ex.isTimed ? 'sec' : 'rip';
-
-          const card = document.createElement('div');
-          card.className = 'rounded-2xl bg-[#121212] border border-[#1e1e1e] p-3.5 shadow-md space-y-3.5';
-          card.innerHTML = `
-            <!-- Header Card Esercizio -->
-            <div class="flex items-start justify-between gap-2">
-              <div class="min-w-0 flex-1">
-                <div class="flex items-center gap-2">
-                  <span class="px-2 py-0.5 rounded-md bg-[#1e1e1e] text-[#95D600] font-mono text-[length:var(--fs-sm)] font-black shrink-0">${ex.code}</span>
-                  <h4 class="text-[length:var(--fs-ex-title)] font-extrabold text-white leading-tight break-words">${ex.name}</h4>
-                </div>
-                <div class="flex items-center gap-2 mt-2 flex-wrap">
-                  <span class="text-[length:var(--fs-micro)] font-bold px-2 py-0.5 rounded-md border ${typeBadgeColor}">${ex.type}</span>
-                  <span class="text-[length:var(--fs-sm)] font-extrabold text-neutral-200">${ex.targetText}</span>
-                </div>
-              </div>
-
-              <!-- Pulsante Guida Tecnica -->
-              <button onclick="toggleSection('guide-${ex.id}', 'chev-${ex.id}')" class="btn-tactile shrink-0 px-2.5 py-2 rounded-xl bg-[#1a1a1a] hover:bg-[#222222] border border-[#2a2a2a] text-[length:var(--fs-sm)] font-bold text-neutral-100 flex items-center gap-1">
-                <span>Tecnica</span>
-                <svg id="chev-${ex.id}" class="w-4 h-4 text-neutral-400 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
-              </button>
-            </div>
-
-            <!-- Badge Doppia Progressione -->
-            ${isReadyToProgress ? `
-              <div class="px-3 py-2 rounded-xl bg-[#95D600]/15 border border-[#95D600]/50 flex items-center justify-between gap-2">
-                <span class="text-[length:var(--fs-sm)] font-extrabold text-[#95D600] leading-snug">★ OBIETTIVO RAGGIUNTO: +${ex.weightStep} kg prossima volta</span>
-              </div>
-            ` : ''}
-
-            <!-- Drawer Guida Tecnica (Setup, Esecuzione, Errore) -->
-            <div id="guide-${ex.id}" class="hidden rounded-xl bg-[#0a0a0a] border border-[#1e1e1e] p-3 space-y-2.5 text-[length:var(--fs-guide)] leading-relaxed">
-              <div>
-                <span class="font-extrabold text-cyan-400 uppercase text-[length:var(--fs-micro)] tracking-wider block">1. Setup</span>
-                <p class="text-neutral-100">${ex.setup}</p>
-              </div>
-              <div>
-                <span class="font-extrabold text-[#95D600] uppercase text-[length:var(--fs-micro)] tracking-wider block">2. Esecuzione (2s • 1s • 3s)</span>
-                <p class="text-neutral-100">${ex.execution}</p>
-              </div>
-              <div>
-                <span class="font-extrabold text-rose-400 uppercase text-[length:var(--fs-micro)] tracking-wider block">3. Errore da evitare</span>
-                <p class="text-neutral-200">${ex.error}</p>
-              </div>
-            </div>
-
-            <!-- Registro Serie 1 e Serie 2 -->
-            <div class="space-y-2.5 pt-1">
-              ${[1, 2].map(setNum => {
-                const wVal = setNum === 1 ? st.s1Weight : st.s2Weight;
-                const rVal = setNum === 1 ? st.s1Reps : st.s2Reps;
-                const isDone = setNum === 1 ? st.done1 : st.done2;
-                const deloadVal = setNum === 1 ? deloadW1 : deloadW2;
-
-                return `
-                  <div class="p-2.5 rounded-xl border transition-colors ${isDone ? 'bg-[#95D600]/10 border-[#95D600]/40' : 'bg-[#0a0a0a] border-[#1e1e1e]'}">
-                    <div class="flex items-center justify-between gap-2 mb-2">
-                      <div class="flex items-center gap-2 min-w-0 flex-wrap">
-                        <span class="text-[length:var(--fs-sm)] font-extrabold text-neutral-200">SERIE ${setNum}</span>
-                        ${appState.deloadMode ? `<span class="text-[length:var(--fs-micro)] font-extrabold px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40">Scarico: ${deloadVal} kg</span>` : ''}
-                      </div>
-                      <button onclick="toggleSetDone('${ex.id}', ${setNum}, ${pair.restSeconds})" class="btn-tactile shrink-0 px-3 py-1.5 rounded-lg text-[length:var(--fs-sm)] font-extrabold border transition-all ${isDone ? 'bg-[#95D600] text-black border-[#95D600]' : 'bg-[#1a1a1a] text-neutral-200 border-[#2a2a2a]'}">
-                        ${isDone ? '✓ Fatta' : 'Segna fatta'}
-                      </button>
-                    </div>
-
-                    <div class="grid grid-cols-2 gap-2">
-                      <!-- Stepper Peso (kg) -->
-                      <div class="bg-[#121212] rounded-xl p-1.5 border border-[#1e1e1e] flex items-center justify-between min-w-0">
-                        <button onclick="adjustMetric('${ex.id}', ${setNum}, 'weight', -${ex.weightStep})" class="btn-tactile w-10 h-11 shrink-0 rounded-lg bg-[#1e1e1e] hover:bg-[#2a2a2a] text-white font-black text-xl flex items-center justify-center">−</button>
-                        <div class="text-center min-w-0 px-1">
-                          <span class="block font-mono text-[length:var(--fs-num)] font-black text-white leading-tight truncate">${wVal}</span>
-                          <span class="block text-[length:var(--fs-micro)] font-semibold text-neutral-400">kg</span>
-                        </div>
-                        <button onclick="adjustMetric('${ex.id}', ${setNum}, 'weight', ${ex.weightStep})" class="btn-tactile w-10 h-11 shrink-0 rounded-lg bg-[#1e1e1e] hover:bg-[#2a2a2a] text-white font-black text-xl flex items-center justify-center">+</button>
-                      </div>
-
-                      <!-- Stepper Ripetizioni / Secondi -->
-                      <div class="bg-[#121212] rounded-xl p-1.5 border border-[#1e1e1e] flex items-center justify-between min-w-0">
-                        <button onclick="adjustMetric('${ex.id}', ${setNum}, 'reps', ${ex.isTimed ? -5 : -1})" class="btn-tactile w-10 h-11 shrink-0 rounded-lg bg-[#1e1e1e] hover:bg-[#2a2a2a] text-white font-black text-xl flex items-center justify-center">−</button>
-                        <div class="text-center min-w-0 px-1">
-                          <span class="block font-mono text-[length:var(--fs-num)] font-black text-[#95D600] leading-tight truncate">${rVal}</span>
-                          <span class="block text-[length:var(--fs-micro)] font-semibold text-neutral-400">${unitLabel}</span>
-                        </div>
-                        <button onclick="adjustMetric('${ex.id}', ${setNum}, 'reps', ${ex.isTimed ? 5 : 1})" class="btn-tactile w-10 h-11 shrink-0 rounded-lg bg-[#1e1e1e] hover:bg-[#2a2a2a] text-white font-black text-xl flex items-center justify-center">+</button>
-                      </div>
-                    </div>
-                  </div>
-                `;
-              }).join('')}
-            </div>
-          `;
-          pairSection.appendChild(card);
-        });
-
-        container.appendChild(pairSection);
-      });
-    }
-
-    function toggleSection(bodyId, chevId) {
-      const body = document.getElementById(bodyId);
-      const chev = document.getElementById(chevId);
-      if (body) body.classList.toggle('hidden');
-      if (chev) chev.classList.toggle('rotate-180');
-    }
-
-    function switchSession(sess) {
-      appState.currentSession = sess;
-      saveState();
-      updateHeaderAndDeloadUI();
-      renderWorkout();
-    }
-
-    function toggleDeload() {
-      appState.deloadMode = !appState.deloadMode;
-      saveState();
-      updateHeaderAndDeloadUI();
-      renderWorkout();
-      showToast(appState.deloadMode ? "Modalità Scarico (-30%) attivata" : "Modalità Scarico disattivata", appState.deloadMode ? "warning" : "info");
-    }
-
-    function activateDeloadFromBanner() {
-      appState.deloadMode = true;
-      saveState();
-      updateHeaderAndDeloadUI();
-      renderWorkout();
-      showToast("Modalità Scarico (-30%) attivata per questa settimana", "warning");
-    }
-
-    function adjustMetric(exId, setNum, type, delta) {
-      const st = appState.exercises[exId];
-      if (!st) return;
-
-      if (type === 'weight') {
-        const key = setNum === 1 ? 's1Weight' : 's2Weight';
-        st[key] = Math.max(0, Math.round((st[key] + delta) * 10) / 10);
-        if (setNum === 1 && !st.done2) {
-          st.s2Weight = st.s1Weight;
-        }
-      } else if (type === 'reps') {
-        const key = setNum === 1 ? 's1Reps' : 's2Reps';
-        st[key] = Math.max(1, st[key] + delta);
-      }
-
-      saveState();
-      renderWorkout();
-    }
-
-    function toggleSetDone(exId, setNum, restSec) {
-      const st = appState.exercises[exId];
-      if (!st) return;
-      const key = setNum === 1 ? 'done1' : 'done2';
-      st[key] = !st[key];
-      saveState();
-      renderWorkout();
-
-      if (st[key]) {
-        playTone(580, 0.1);
-        startRestTimer(restSec);
-      }
-    }
-
-    function completeWorkout() {
-      const completedSess = appState.currentSession;
-      appState.completedCount += 1;
-      appState.lastCompletedSession = completedSess;
-
-      Object.keys(appState.exercises).forEach(id => {
-        appState.exercises[id].done1 = false;
-        appState.exercises[id].done2 = false;
-      });
-      appState.mobility = [false, false, false];
-
-      const nextSess = completedSess === 'A' ? 'B' : 'A';
-      appState.currentSession = nextSess;
-
-      saveState();
-      updateHeaderAndDeloadUI();
-      renderMobility();
-      renderWorkout();
-
-      playTone(780, 0.25);
-      triggerVibration([100, 60, 150]);
-      showToast(`Seduta ${completedSess} salvata! Prossima: Seduta ${nextSess}.`, "success");
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-
-    /* ==========================================================================
-       7. TIMER MOBILITÀ 5 MINUTI (FASE 0)
-       ========================================================================== */
-    let mobInterval = null;
-    let mobSeconds = 5 * 60;
-    let mobRunning = false;
+    // --- REST TIMER ---
+    let restInterval = null;
+    let restRemaining = 60;
 
     function formatTime(sec) {
-      const m = Math.floor(sec / 60).toString().padStart(2, '0');
-      const s = (sec % 60).toString().padStart(2, '0');
-      return `${m}:${s}`;
+      const m = Math.floor(sec / 60);
+      const s = sec % 60;
+      return `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
     }
 
-    function toggleMobilityTimer() {
-      const btn = document.getElementById('mob-timer-btn');
-      if (mobRunning) {
-        clearInterval(mobInterval);
-        mobInterval = null;
-        mobRunning = false;
-        mobSeconds = 5 * 60;
-        btn.textContent = "⏱ 05:00";
-        btn.className = "btn-tactile px-2.5 py-1.5 rounded-xl bg-cyan-500/20 border border-cyan-500/40 text-cyan-300 font-mono text-[length:var(--fs-sm)] font-extrabold";
-      } else {
-        mobRunning = true;
-        btn.className = "btn-tactile px-2.5 py-1.5 rounded-xl bg-cyan-400 text-black font-mono text-[length:var(--fs-sm)] font-black";
-        btn.textContent = `⏸ ${formatTime(mobSeconds)}`;
-        mobInterval = setInterval(() => {
-          mobSeconds--;
-          if (mobSeconds <= 0) {
-            clearInterval(mobInterval);
-            mobInterval = null;
-            mobRunning = false;
-            mobSeconds = 5 * 60;
-            btn.textContent = "⏱ 05:00";
-            btn.className = "btn-tactile px-2.5 py-1.5 rounded-xl bg-cyan-500/20 border border-cyan-500/40 text-cyan-300 font-mono text-[length:var(--fs-sm)] font-extrabold";
-            playTone(740, 0.25);
-            triggerVibration([150, 80, 150]);
-            showToast("5 minuti di mobilità terminati! Passa ai pesi.", "success");
-          } else {
-            btn.textContent = `⏸ ${formatTime(mobSeconds)}`;
-          }
-        }, 1000);
-      }
-    }
-
-    /* ==========================================================================
-       8. TIMER RECUPERO RAPIDO (STICKY DOCK SINISTRA)
-       ========================================================================== */
-    let restInterval = null;
-    let restRemaining = 0;
-
-    function startRestTimer(seconds) {
-      stopRestTimer();
+    function startRest(seconds) {
+      clearInterval(restInterval);
       restRemaining = seconds;
-      const display = document.getElementById('rest-timer-display');
-      display.textContent = formatTime(restRemaining);
-      display.className = "font-mono text-[length:var(--fs-timer)] font-black text-cyan-400 leading-none shrink-0";
+      document.getElementById("restDisplay").textContent = formatTime(restRemaining);
+      document.getElementById("restStatus").textContent = "IN CORSO";
+      document.getElementById("restStatus").style.color = "var(--warn)";
+      beep(520, 0.06);
 
       restInterval = setInterval(() => {
         restRemaining--;
         if (restRemaining <= 0) {
-          stopRestTimer();
-          display.textContent = "VIA!";
-          display.className = "font-mono text-[length:var(--fs-timer)] font-black text-[#95D600] leading-none animate-bounce shrink-0";
-          playTone(880, 0.25, 'triangle', 0.35);
-          setTimeout(() => playTone(1046, 0.3, 'triangle', 0.35), 180);
-          triggerVibration([200, 100, 200]);
-          showToast("Recupero terminato! Tocca alla prossima serie.", "info");
+          clearInterval(restInterval);
+          document.getElementById("restDisplay").textContent = "00:00";
+          document.getElementById("restStatus").textContent = "VAI!";
+          document.getElementById("restStatus").style.color = "var(--neon)";
+          beep(880, 0.15);
+          setTimeout(() => beep(880, 0.25), 180);
+          if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
         } else {
-          display.textContent = formatTime(restRemaining);
-          if (restRemaining <= 3) {
-            playTone(440, 0.06, 'sine', 0.15);
-          }
+          document.getElementById("restDisplay").textContent = formatTime(restRemaining);
         }
       }, 1000);
     }
 
-    function stopRestTimer() {
-      if (restInterval) {
-        clearInterval(restInterval);
-        restInterval = null;
-      }
-      const display = document.getElementById('rest-timer-display');
-      display.textContent = "00:00";
-      display.className = "font-mono text-[length:var(--fs-timer)] font-black text-white leading-none shrink-0";
+    function stopRest() {
+      clearInterval(restInterval);
+      restRemaining = 60;
+      document.getElementById("restDisplay").textContent = "01:00";
+      document.getElementById("restStatus").textContent = "PRONTO";
+      document.getElementById("restStatus").style.color = "var(--neon)";
     }
 
-    /* ==========================================================================
-       9. METRONOMO CADENZA 2·1·3 (2s SPINGI -> 1s FERMO -> 3s SCENDI)
-       ========================================================================== */
-    let metroInterval = null;
-    let metroRunning = false;
-    let metroSecondInRep = 0;
-    let metroRepCount = 0;
+    // --- CADENCE METRONOME (2s PUSH - 1s HOLD - 3s DOWN = 6s cycle) ---
+    let cadenceInterval = null;
+    let cadenceRunning = false;
+    let cadenceTick = 0; // 0..5
+    let repCount = 0;
 
-    function updateMetronomeUI() {
-      const box = document.getElementById('metronome-box');
-      const label = document.getElementById('metro-phase-label');
-      const btn = document.getElementById('metro-toggle-btn');
-      const btnText = document.getElementById('metro-btn-text');
-      const secBadge = document.getElementById('metro-sec-badge');
-      const repEl = document.getElementById('metro-rep-count');
-
-      repEl.textContent = metroRepCount;
-
-      if (!metroRunning) {
-        box.className = "rounded-2xl bg-[#121212] border border-[#1e1e1e] p-2 flex flex-col justify-between transition-colors duration-200 min-w-0";
-        label.className = "text-[length:var(--fs-micro)] font-extrabold uppercase tracking-wider text-[#95D600] truncate";
-        label.textContent = "Cadenza 2·1·3";
-        btn.className = "btn-tactile flex-1 min-w-0 py-2 px-2 rounded-xl bg-[#95D600] text-black font-black text-[length:var(--fs-sm)] flex items-center justify-center gap-1";
-        btnText.textContent = "Avvia";
-        secBadge.classList.add('hidden');
-        return;
-      }
-
-      secBadge.classList.remove('hidden');
-      btn.className = "btn-tactile flex-1 min-w-0 py-2 px-2 rounded-xl bg-[#1e1e1e] border border-[#333333] text-white font-extrabold text-[length:var(--fs-sm)] flex items-center justify-center gap-1";
-      btnText.textContent = "Stop";
-
-      if (metroSecondInRep < 2) {
-        const rem = 2 - metroSecondInRep;
-        box.className = "rounded-2xl bg-[#95D600]/20 border border-[#95D600] p-2 flex flex-col justify-between transition-colors duration-200 min-w-0";
-        label.className = "text-[length:var(--fs-micro)] font-black uppercase tracking-wider text-[#95D600] truncate";
-        label.textContent = "SPINGI • ESPIRA";
-        secBadge.textContent = `${rem}s`;
-      } else if (metroSecondInRep === 2) {
-        box.className = "rounded-2xl bg-amber-500/20 border border-amber-500 p-2 flex flex-col justify-between transition-colors duration-200 min-w-0";
-        label.className = "text-[length:var(--fs-micro)] font-black uppercase tracking-wider text-amber-300 truncate";
-        label.textContent = "FERMO • PAUSA";
-        secBadge.textContent = "1s";
+    function toggleCadence() {
+      if (cadenceRunning) {
+        clearInterval(cadenceInterval);
+        cadenceRunning = false;
+        document.getElementById("cadenceBtn").textContent = "▶ Avvia";
+        document.getElementById("cadencePhase").textContent = "PAUSA";
+        document.getElementById("cadencePhase").className = "dock-display";
       } else {
-        const rem = 6 - metroSecondInRep;
-        box.className = "rounded-2xl bg-cyan-500/20 border border-cyan-400 p-2 flex flex-col justify-between transition-colors duration-200 min-w-0";
-        label.className = "text-[length:var(--fs-micro)] font-black uppercase tracking-wider text-cyan-300 truncate";
-        label.textContent = "SCENDI • INSPIRA";
-        secBadge.textContent = `${rem}s`;
+        cadenceRunning = true;
+        document.getElementById("cadenceBtn").textContent = "❚❚ Pausa";
+        runCadenceStep();
+        cadenceInterval = setInterval(runCadenceStep, 1000);
       }
     }
 
-    function stepMetronome() {
-      if (metroSecondInRep === 0) {
-        playTone(660, 0.1, 'sine', 0.25);
-      } else if (metroSecondInRep === 2) {
-        playTone(520, 0.08, 'triangle', 0.2);
-      } else if (metroSecondInRep === 3) {
-        playTone(390, 0.1, 'sine', 0.25);
-      } else {
-        playTone(300, 0.04, 'sine', 0.08);
+    function runCadenceStep() {
+      const phaseEl = document.getElementById("cadencePhase");
+      if (cadenceTick === 0) {
+        repCount++;
+        document.getElementById("repCounter").textContent = `RIP: ${repCount}`;
+        phaseEl.textContent = "SPINGI · 1";
+        phaseEl.className = "dock-display cad-push";
+        beep(740, 0.08);
+      } else if (cadenceTick === 1) {
+        phaseEl.textContent = "SPINGI · 2";
+        phaseEl.className = "dock-display cad-push";
+      } else if (cadenceTick === 2) {
+        phaseEl.textContent = "FERMO · 1";
+        phaseEl.className = "dock-display cad-hold";
+        beep(580, 0.06);
+      } else if (cadenceTick === 3) {
+        phaseEl.textContent = "SCENDI · 1";
+        phaseEl.className = "dock-display cad-down";
+        beep(420, 0.06);
+      } else if (cadenceTick === 4) {
+        phaseEl.textContent = "SCENDI · 2";
+        phaseEl.className = "dock-display cad-down";
+      } else if (cadenceTick === 5) {
+        phaseEl.textContent = "SCENDI · 3";
+        phaseEl.className = "dock-display cad-down";
       }
-
-      updateMetronomeUI();
-
-      metroSecondInRep++;
-      if (metroSecondInRep >= 6) {
-        metroSecondInRep = 0;
-        metroRepCount++;
-      }
+      cadenceTick = (cadenceTick + 1) % 6;
     }
 
-    function toggleMetronome() {
-      if (metroRunning) {
-        clearInterval(metroInterval);
-        metroInterval = null;
-        metroRunning = false;
-        updateMetronomeUI();
-      } else {
-        metroRunning = true;
-        metroSecondInRep = 0;
-        stepMetronome();
-        metroInterval = setInterval(stepMetronome, 1000);
-      }
+    function resetCadence() {
+      clearInterval(cadenceInterval);
+      cadenceRunning = false;
+      cadenceTick = 0;
+      repCount = 0;
+      document.getElementById("cadenceBtn").textContent = "▶ Avvia";
+      document.getElementById("cadencePhase").textContent = "FERMO";
+      document.getElementById("cadencePhase").className = "dock-display";
+      document.getElementById("repCounter").textContent = "RIP: 0";
     }
 
-    function resetMetronome() {
-      if (metroInterval) {
-        clearInterval(metroInterval);
-        metroInterval = null;
-      }
-      metroRunning = false;
-      metroSecondInRep = 0;
-      metroRepCount = 0;
-      updateMetronomeUI();
-    }
-
-    /* ==========================================================================
-       10. TIMER CARDIO FINALE (15 MINUTI - BORG 12-14)
-       ========================================================================== */
+    // --- CARDIO TIMER ---
     let cardioInterval = null;
-    let cardioSeconds = 15 * 60;
     let cardioRunning = false;
+    let cardioSec = 900; // 15 min
 
-    function updateCardioUI() {
-      document.getElementById('cardio-display').textContent = formatTime(cardioSeconds);
-      const btn = document.getElementById('cardio-start-btn');
-      if (cardioRunning) {
-        btn.textContent = "Pausa Cardio";
-        btn.className = "btn-tactile col-span-2 py-3 rounded-xl bg-cyan-400 hover:bg-cyan-300 text-black font-black text-[length:var(--fs-base)] transition-all";
-      } else {
-        btn.textContent = cardioSeconds === 15 * 60 ? "Avvia 15:00" : "Riprendi Cardio";
-        btn.className = "btn-tactile col-span-2 py-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-black text-[length:var(--fs-base)] transition-all";
-      }
-    }
-
-    function toggleCardioTimer() {
+    function toggleCardio() {
+      const btn = document.getElementById("cardioStartBtn");
       if (cardioRunning) {
         clearInterval(cardioInterval);
-        cardioInterval = null;
         cardioRunning = false;
-        updateCardioUI();
+        btn.textContent = "Riprendi";
       } else {
         cardioRunning = true;
-        updateCardioUI();
+        btn.textContent = "Pausa";
         cardioInterval = setInterval(() => {
-          cardioSeconds--;
-          if (cardioSeconds <= 0) {
+          cardioSec--;
+          if (cardioSec <= 0) {
             clearInterval(cardioInterval);
-            cardioInterval = null;
             cardioRunning = false;
-            cardioSeconds = 0;
-            updateCardioUI();
-            playTone(880, 0.3);
-            triggerVibration([300, 100, 300]);
-            showToast("15 minuti di cardio completati! Ottimo lavoro.", "success");
+            document.getElementById("cardioDisplay").textContent = "00:00";
+            btn.textContent = "Fatto!";
+            beep(880, 0.3);
+            if (navigator.vibrate) navigator.vibrate([300, 150, 300]);
           } else {
-            updateCardioUI();
+            document.getElementById("cardioDisplay").textContent = formatTime(cardioSec);
           }
         }, 1000);
       }
     }
 
-    function resetCardioTimer() {
-      if (cardioInterval) {
-        clearInterval(cardioInterval);
-        cardioInterval = null;
-      }
+    function resetCardio() {
+      clearInterval(cardioInterval);
       cardioRunning = false;
-      cardioSeconds = 15 * 60;
-      updateCardioUI();
+      cardioSec = 900;
+      document.getElementById("cardioDisplay").textContent = "15:00";
+      document.getElementById("cardioStartBtn").textContent = "Avvia";
     }
 
-    /* ==========================================================================
-       11. BACKUP E RIPRISTINO DATI JSON
-       ========================================================================== */
+    // --- WAKE LOCK ---
+    let wakeLock = null;
+    async function toggleWakeLock() {
+      const btn = document.getElementById("wakeBtn");
+      if (!("wakeLock" in navigator)) {
+        showToast("WakeLock non supportato dal browser");
+        return;
+      }
+      if (wakeLock) {
+        await wakeLock.release();
+        wakeLock = null;
+        btn.classList.remove("active");
+        showToast("Blocco schermo normale");
+      } else {
+        try {
+          wakeLock = await navigator.wakeLock.request("screen");
+          btn.classList.add("active");
+          showToast("Schermo sempre acceso attivo");
+          wakeLock.addEventListener("release", () => {
+            wakeLock = null;
+            btn.classList.remove("active");
+          });
+        } catch (err) {
+          showToast("Impossibile attivare schermo acceso");
+        }
+      }
+    }
+
+    // --- MODAL & BACKUP ---
+    function openModal() { document.getElementById("settingsModal").classList.add("open"); }
+    function closeModal() { document.getElementById("settingsModal").classList.remove("open"); }
+
     function exportData() {
-      const dataStr = JSON.stringify(appState, null, 2);
+      const dataStr = JSON.stringify(state, null, 2);
       const blob = new Blob([dataStr], { type: "application/json" });
       const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
+      const a = document.createElement("a");
       a.href = url;
       a.download = `gym_hit_backup_${new Date().toISOString().slice(0,10)}.json`;
-      document.body.appendChild(a);
       a.click();
-      document.body.removeChild(a);
       URL.revokeObjectURL(url);
-      showToast("File di backup scaricato!", "success");
-    }
-
-    function copyBackupText() {
-      const area = document.getElementById('import-json-area');
-      area.value = JSON.stringify(appState);
-      area.select();
-      try {
-        document.execCommand('copy');
-        showToast("Dati copiati negli appunti!", "success");
-      } catch (e) {
-        showToast("Seleziona e copia manualmente il testo nel riquadro", "warning");
-      }
+      showToast("Backup scaricato");
     }
 
     function importData() {
-      const raw = document.getElementById('import-json-area').value.trim();
-      if (!raw) {
-        showToast("Incolla prima un codice JSON valido", "warning");
-        return;
-      }
-      try {
-        const parsed = JSON.parse(raw);
-        if (typeof parsed !== 'object' || !parsed.exercises) {
-          throw new Error("Formato non valido");
-        }
-        appState = { ...appState, ...parsed };
-        initExerciseDefaults();
-        saveState();
-        updateHeaderAndDeloadUI();
-        renderMobility();
-        renderWorkout();
-        closeModal('modal-backup');
-        showToast("Dati ripristinati con successo!", "success");
-      } catch (e) {
-        showToast("Errore: il testo incollato non è un backup valido", "warning");
-      }
-    }
-
-    let resetConfirmStep = false;
-    function confirmResetAll() {
-      const btn = document.getElementById('btn-reset-all');
-      if (!resetConfirmStep) {
-        resetConfirmStep = true;
-        btn.textContent = "Confermi azzeramento? Tocca di nuovo";
-        setTimeout(() => {
-          resetConfirmStep = false;
-          btn.textContent = "Azzera tutto";
-        }, 4000);
-        return;
-      }
-      localStorage.removeItem(STORAGE_KEY);
-      appState = {
-        currentSession: 'A',
-        lastCompletedSession: null,
-        completedCount: 0,
-        deloadMode: false,
-        mobility: [false, false, false],
-        exercises: {}
+      const input = document.createElement("input");
+      input.type = "file";
+      input.accept = "application/json";
+      input.onchange = e => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = ev => {
+          try {
+            const imported = JSON.parse(ev.target.result);
+            if (imported && imported.logs) {
+              state = imported;
+              saveState();
+              renderAll();
+              closeModal();
+              showToast("Backup ripristinato!");
+            }
+          } catch (err) {
+            alert("File JSON non valido.");
+          }
+        };
+        reader.readAsText(file);
       };
-      initExerciseDefaults();
-      saveState();
-      updateHeaderAndDeloadUI();
-      renderMobility();
-      renderWorkout();
-      closeModal('modal-backup');
-      resetConfirmStep = false;
-      btn.textContent = "Azzera tutto";
-      showToast("Tutti i dati sono stati azzerati", "info");
+      input.click();
     }
 
-    /* ==========================================================================
-       12. INIZIALIZZAZIONE
-       ========================================================================== */
-    window.addEventListener('DOMContentLoaded', () => {
-      loadState();
-      updateHeaderAndDeloadUI();
-      renderMobility();
-      renderWorkout();
-      updateCardioUI();
-      updateMetronomeUI();
-    });
+    function resetAllData() {
+      if (confirm("Vuoi davvero azzerare tutti i pesi e le sedute registrate?")) {
+        localStorage.removeItem(STORAGE_KEY);
+        location.reload();
+      }
+    }
+
+    // Init
+    loadState();
+    renderAll();
   </script>
 </body>
 </html>
