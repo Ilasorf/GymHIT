@@ -8,7 +8,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="GYM HIT" />
   <meta name="mobile-web-app-capable" content="yes" />
-  <title>GYM HIT · Coach 2·1·3</title>
+  <title>GYM HIT · Coach Multi-Profilo</title>
 
   <!-- Icona PWA SVG incorporata -->
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='112' fill='%23050505'/%3E%3Ccircle cx='256' cy='256' r='185' fill='none' stroke='%231a1a1a' stroke-width='26'/%3E%3Cpath d='M 256 71 A 185 185 0 1 1 85 328' fill='none' stroke='%2395D600' stroke-width='26' stroke-linecap='round'/%3E%3Ctext x='256' y='185' font-family='system-ui, -apple-system, sans-serif' font-weight='800' font-size='38' fill='%2395D600' text-anchor='middle' letter-spacing='6'%3EGYM%3C/text%3E%3Ctext x='256' y='285' font-family='system-ui, -apple-system, sans-serif' font-weight='900' font-size='115' fill='%23ffffff' text-anchor='middle' letter-spacing='4'%3EHIT%3C/text%3E%3Ctext x='256' y='345' font-family='system-ui, -apple-system, sans-serif' font-weight='800' font-size='38' fill='%2395D600' text-anchor='middle' letter-spacing='6'%3E2%C2%B71%C2%B73%3C/text%3E%3C/svg%3E" />
@@ -24,21 +24,27 @@
       --muted: #a1a1aa;
       --neon: #95D600;
       --neon-dim: rgba(149, 214, 0, 0.14);
+      --sky: #38bdf8;
+      --sky-dim: rgba(56, 189, 248, 0.14);
       --warn: #f59e0b;
       --warn-dim: rgba(245, 158, 11, 0.16);
       --danger: #ef4444;
-      --sky: #38bdf8;
       --radius: 14px;
 
-      /* === DIMENSIONI FONT CENTRALIZZATE (Modifica qui se vuoi ingrandire/ridurre) === */
-      --fs-micro: 12px;   /* Etichette superiori (PESO KG, RIPETIZIONI, RECUPERO) */
-      --fs-small: 14px;   /* Sottotitoli, badge, note secondarie */
-      --fs-body: 16px;    /* Testo base e descrizioni */
-      --fs-guide: 16px;   /* Testo guida tecnica (Setup, Esecuzione, Errore) */
-      --fs-title: 18px;   /* Titoli esercizi e sezioni */
-      --fs-header: 20px;  /* Titolo in alto GYM HIT */
-      --fs-num: 22px;     /* Numeri pesi e ripetizioni nelle caselle */
-      --fs-timer: 26px;   /* Numeri timer in basso */
+      /* === DIMENSIONI FONT CENTRALIZZATE === */
+      --fs-micro: 12px;
+      --fs-small: 14px;
+      --fs-body: 16px;
+      --fs-guide: 16px;
+      --fs-title: 18px;
+      --fs-header: 20px;
+      --fs-num: 22px;
+      --fs-timer: 26px;
+    }
+
+    body.profile-leone {
+      --neon: #38bdf8;
+      --neon-dim: rgba(56, 189, 248, 0.15);
     }
 
     * {
@@ -141,6 +147,37 @@
       background: var(--neon-dim);
     }
 
+    /* Profile Switcher */
+    .profile-bar {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      background: var(--surface);
+      padding: 6px;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      margin-bottom: 12px;
+    }
+
+    .profile-btn {
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--muted);
+      padding: 9px 8px;
+      border-radius: 10px;
+      font-size: var(--fs-body);
+      font-weight: 800;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.15s;
+    }
+
+    .profile-btn.active {
+      background: var(--neon-dim);
+      border-color: var(--neon);
+      color: var(--neon);
+    }
+
     /* Status & Deload Banner */
     .status-card {
       background: var(--surface);
@@ -166,6 +203,10 @@
       padding: 5px 10px;
       border-radius: 999px;
       border: 1px solid rgba(149, 214, 0, 0.3);
+    }
+
+    body.profile-leone .week-badge {
+      border-color: rgba(56, 189, 248, 0.35);
     }
 
     .deload-toggle {
@@ -421,8 +462,8 @@
       border-radius: 8px;
       font-size: var(--fs-small);
       font-weight: 700;
-      background: rgba(149, 214, 0, 0.14);
-      border: 1px solid rgba(149, 214, 0, 0.4);
+      background: var(--neon-dim);
+      border: 1px solid var(--neon);
       color: var(--neon);
       display: none;
     }
@@ -535,7 +576,7 @@
       font-weight: 900;
       cursor: pointer;
       margin-top: 8px;
-      box-shadow: 0 4px 20px rgba(149, 214, 0, 0.25);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
     }
 
     .finish-btn:active {
@@ -640,7 +681,7 @@
     /* Cadence States */
     .cad-push { color: #38bdf8; }
     .cad-hold { color: var(--warn); }
-    .cad-down { color: var(--neon); }
+    .cad-down { color: #95D600; }
 
     /* Modal for Backup / Info */
     .modal-backdrop {
@@ -721,14 +762,14 @@
         <svg width="42" height="42" viewBox="0 0 512 512" style="flex-shrink:0">
           <rect width="512" height="512" rx="112" fill="#121212" stroke="#2a2a2a" stroke-width="16"/>
           <circle cx="256" cy="256" r="185" fill="none" stroke="#1a1a1a" stroke-width="26"/>
-          <path d="M 256 71 A 185 185 0 1 1 85 328" fill="none" stroke="#95D600" stroke-width="26" stroke-linecap="round"/>
-          <text x="256" y="185" font-family="system-ui, sans-serif" font-weight="800" font-size="38" fill="#95D600" text-anchor="middle" letter-spacing="6">GYM</text>
+          <path id="logoArc" d="M 256 71 A 185 185 0 1 1 85 328" fill="none" stroke="#95D600" stroke-width="26" stroke-linecap="round"/>
+          <text id="logoTop" x="256" y="185" font-family="system-ui, sans-serif" font-weight="800" font-size="38" fill="#95D600" text-anchor="middle" letter-spacing="6">GYM</text>
           <text x="256" y="285" font-family="system-ui, sans-serif" font-weight="900" font-size="115" fill="#ffffff" text-anchor="middle" letter-spacing="4">HIT</text>
-          <text x="256" y="345" font-family="system-ui, sans-serif" font-weight="800" font-size="38" fill="#95D600" text-anchor="middle" letter-spacing="6">2·1·3</text>
+          <text id="logoBot" x="256" y="345" font-family="system-ui, sans-serif" font-weight="800" font-size="38" fill="#95D600" text-anchor="middle" letter-spacing="6">2·1·3</text>
         </svg>
         <div>
           <h1>GYM <span>HIT</span></h1>
-          <div class="sub">Protocollo 2026 · Forza & Resistenza</div>
+          <div id="headerSub" class="sub">Profilo Simone · Forza & Resistenza</div>
         </div>
       </div>
       <div class="header-actions">
@@ -736,6 +777,12 @@
         <button class="icon-btn" onclick="openModal()" title="Dati e Regole">⚙️</button>
       </div>
     </header>
+
+    <!-- Profile Selector -->
+    <div class="profile-bar">
+      <button id="profSimone" class="profile-btn active" onclick="switchProfile('simone')">👤 SIMONE (HIT)</button>
+      <button id="profLeone" class="profile-btn" onclick="switchProfile('leone')">🦁 LEONE (16 ANNI)</button>
+    </div>
 
     <!-- Status & Deload -->
     <div class="status-card">
@@ -752,53 +799,31 @@
     <div class="tabs">
       <button id="tabA" class="tab-btn active" onclick="selectWorkout('A')">
         <span class="tab-title">SEDUTA A</span>
-        <span class="tab-sub">Spinta/Tirata Orizz. + Leg Press</span>
+        <span id="tabASub" class="tab-sub">Spinta/Tirata Orizz. + Leg Press</span>
       </button>
       <button id="tabB" class="tab-btn" onclick="selectWorkout('B')">
         <span class="tab-title">SEDUTA B</span>
-        <span class="tab-sub">Spinta/Tirata Vert. + Goblet Squat</span>
+        <span id="tabBSub" class="tab-sub">Spinta/Tirata Vert. + Goblet Squat</span>
       </button>
     </div>
 
     <!-- Breathing & Effort Reminder -->
-    <div class="breath-bar">
-      <strong>Regola d'oro:</strong> Soffia fuori l'aria mentre spingi/tiri, inspira mentre scendi in <strong>3 sec</strong>. Mai trattenere il fiato (no Valsalva). Fermati a <strong>1–2 rip</strong> dal cedimento tecnico.
-    </div>
+    <div id="breathBar" class="breath-bar"></div>
 
-    <!-- Phase 0: Mobility -->
+    <!-- Phase 0: Mobility / Warmup -->
     <div class="section-card">
       <div class="section-header">
-        <h2 class="section-title">Fase 0 · Mobilità (5 min)</h2>
+        <h2 id="mobTitle" class="section-title">Fase 0 · Mobilità (5 min)</h2>
         <button class="icon-btn" onclick="startRest(300)">⏱️ 5:00</button>
       </div>
-      <label class="mob-item">
-        <input type="checkbox" id="mob1" onchange="saveMobility()" />
-        <div class="mob-text">
-          <strong>1. Circonduzioni spalle con bastone (10 rip)</strong>
-          <span>Braccia tese, presa larga, passa sopra la testa fino a dietro senza piegare i gomiti.</span>
-        </div>
-      </label>
-      <label class="mob-item">
-        <input type="checkbox" id="mob2" onchange="saveMobility()" />
-        <div class="mob-text">
-          <strong>2. Cat-Cow colonna vertebrale (10 rip)</strong>
-          <span>A quattro zampe: inarca verso l'alto espirando, scendi verso il basso inspirando.</span>
-        </div>
-      </label>
-      <label class="mob-item">
-        <input type="checkbox" id="mob3" onchange="saveMobility()" />
-        <div class="mob-text">
-          <strong>3. Squat corpo libero con pausa (8 rip)</strong>
-          <span>Scendi lento, resta 2 secondi in basso spingendo le ginocchia in fuori, talloni a terra.</span>
-        </div>
-      </label>
+      <div id="mobilityContainer"></div>
     </div>
 
     <!-- Dynamic Exercises Container -->
     <div id="exercisesContainer"></div>
 
-    <!-- Phase Final: Cardio -->
-    <div class="section-card">
+    <!-- Phase Final: Cardio (Simone only) -->
+    <div id="cardioSection" class="section-card">
       <div class="section-header">
         <h2 class="section-title">Cardio Finale · Borg 12–14</h2>
         <span class="chip">15 Minuti</span>
@@ -815,7 +840,7 @@
       </div>
     </div>
 
-    <button class="finish-btn" onclick="completeWorkout()">✓ Completa e Registra Seduta</button>
+    <button id="finishBtn" class="finish-btn" onclick="completeWorkout()">✓ Completa e Registra Seduta</button>
   </div>
 
   <!-- Sticky Bottom Dock -->
@@ -828,7 +853,7 @@
           <span id="restStatus" style="color:var(--neon)">PRONTO</span>
         </div>
         <div id="restDisplay" class="dock-display">01:00</div>
-        <div class="dock-btns">
+        <div id="restBtns" class="dock-btns">
           <button class="d-btn primary" onclick="startRest(60)">60s</button>
           <button class="d-btn" onclick="startRest(45)">45s</button>
           <button class="d-btn" onclick="stopRest()">Stop</button>
@@ -853,13 +878,9 @@
   <!-- Modal Settings & Criteria -->
   <div id="settingsModal" class="modal-backdrop" onclick="if(event.target===this) closeModal()">
     <div class="modal">
-      <h3>Regole & Gestione Dati</h3>
-      <div style="font-size: var(--fs-small); color: #e4e4e7; margin-bottom: 14px; line-height: 1.5;">
-        <p style="margin:0 0 8px 0;"><strong>1. Peso Iniziale:</strong> Scegli un carico con cui chiudi le ripetizioni minime sentendo di averne ancora <strong>2–3 pulite</strong> (2–3 RIR).</p>
-        <p style="margin:0 0 8px 0;"><strong>2. Doppia Progressione:</strong> Aumenta prima le ripetizioni. Quando chiudi il massimo previsto in <strong>entrambe le serie</strong> con 3 sec di discesa, aumenta il peso (+1/+2.5 kg parte alta, +2.5/+5 kg gambe) e riparti dal minimo.</p>
-        <p style="margin:0;"><strong>3. Giorni Wegovy / Stanchezza:</strong> Se hai nausea o stanchezza da cambio dose, riduci i pesi del 10–15% e cura solo la tecnica.</p>
-      </div>
-      <button class="modal-btn" onclick="exportData()">📤 Esporta Backup Dati (JSON)</button>
+      <h3 id="modalTitle">Regole & Gestione Dati</h3>
+      <div id="modalRules" style="font-size: var(--fs-small); color: #e4e4e7; margin-bottom: 14px; line-height: 1.5;"></div>
+      <button class="modal-btn" onclick="exportData()">📤 Esporta Backup Completo (JSON)</button>
       <button class="modal-btn" onclick="importData()">📥 Importa Backup Dati</button>
       <button class="modal-btn" style="color:#f87171; border-color:rgba(239,68,68,0.4);" onclick="resetAllData()">🗑️ Azzera Tutto</button>
       <button class="modal-btn" style="background:var(--neon); color:#050505; border:none;" onclick="closeModal()">Chiudi</button>
@@ -867,230 +888,313 @@
   </div>
 
   <script>
-    // --- WORKOUT DATA ---
-    const WORKOUTS = {
-      A: [
-        {
-          pair: "Coppia 1 · Gambe (Alterna 1A e 1B · Pausa 60s)",
-          items: [
+    // --- PROFILES & WORKOUT DATA ---
+    const PROFILES_DATA = {
+      simone: {
+        label: "Simone",
+        sub: "Profilo Simone · Forza & Resistenza",
+        tabASub: "Spinta/Tirata Orizz. + Leg Press",
+        tabBSub: "Spinta/Tirata Vert. + Goblet Squat",
+        breathNote: "<strong>Regola d'oro (Simone):</strong> Soffia fuori l'aria mentre spingi/tiri, inspira mentre scendi in <strong>3 sec</strong>. Mai trattenere il fiato (no Valsalva). Fermati a <strong>1–2 rip</strong> dal cedimento tecnico.",
+        mobTitle: "Fase 0 · Mobilità (5 min)",
+        mobilityItems: [
+          { id: "mob1", title: "1. Circonduzioni spalle con bastone (10 rip)", desc: "Braccia tese, presa larga, passa sopra la testa fino a dietro senza piegare i gomiti." },
+          { id: "mob2", title: "2. Cat-Cow colonna vertebrale (10 rip)", desc: "A quattro zampe: inarca verso l'alto espirando, scendi verso il basso inspirando." },
+          { id: "mob3", title: "3. Squat corpo libero con pausa (8 rip)", desc: "Scendi lento, resta 2 secondi in basso spingendo le ginocchia in fuori, talloni a terra." }
+        ],
+        hasCardio: true,
+        hasDeload: true,
+        restButtons: [60, 45],
+        rulesHtml: `
+          <p style="margin:0 0 8px 0;"><strong>1. Peso Iniziale:</strong> Scegli un carico con cui chiudi le ripetizioni minime sentendo di averne ancora <strong>2–3 pulite</strong> (2–3 RIR).</p>
+          <p style="margin:0 0 8px 0;"><strong>2. Doppia Progressione:</strong> Aumenta prima le ripetizioni. Quando chiudi il massimo previsto in <strong>entrambe le serie</strong> con 3 sec di discesa, aumenta il peso (+1/+2.5 kg parte alta, +2.5/+5 kg gambe) e riparti dal minimo.</p>
+          <p style="margin:0;"><strong>3. Giorni Wegovy / Stanchezza:</strong> Se hai nausea o stanchezza da cambio dose, riduci i pesi del 10–15% e cura solo la tecnica.</p>
+        `,
+        workouts: {
+          A: [
             {
-              id: "A_1A",
-              code: "1A",
-              name: "Leg Press (Macchina)",
-              sets: 2,
-              minReps: 10,
-              maxReps: 12,
-              stepKg: 2.5,
-              defaultKg: 40,
-              setup: "Schienale regolato per avere 90° alle ginocchia in partenza. Piedi larghezza spalle sulla pedana, punte leggermente in fuori.",
-              exec: "Spingi la pedana espirando senza bloccare del tutto le ginocchia a fine corsa. Scendi in 3 secondi inspirando fino a portare le cosce vicino al busto.",
-              err: "Alzare il sedere o staccare la bassa schiena dallo schienale a fine discesa."
+              pair: "Coppia 1 · Gambe (Alterna 1A e 1B · Pausa 60s)",
+              items: [
+                {
+                  id: "S_A_1A", code: "1A", name: "Leg Press (Macchina)", sets: 2, minReps: 10, maxReps: 12, stepKg: 2.5, defaultKg: 40,
+                  setup: "Schienale regolato per avere 90° alle ginocchia in partenza. Piedi larghezza spalle sulla pedana, punte leggermente in fuori.",
+                  exec: "Spingi la pedana espirando senza bloccare del tutto le ginocchia a fine corsa. Scendi in 3 secondi inspirando fino a portare le cosce vicino al busto.",
+                  err: "Alzare il sedere o staccare la bassa schiena dallo schienale a fine discesa."
+                },
+                {
+                  id: "S_A_1B", code: "1B", name: "Seated Leg Curl (Femorali Seduto)", sets: 2, minReps: 10, maxReps: 12, stepKg: 2.5, defaultKg: 25,
+                  setup: "Allinea il perno della macchina con il centro del ginocchio. Cuscino ben saldo sulle cosce, rullo appena sopra i talloni.",
+                  exec: "Piega le gambe portando i talloni sotto il sedile espirando. Ferma 1 secondo, poi risali frenando il peso per 3 secondi.",
+                  err: "Slanciarsi in avanti con il busto o far sbattere i pesi a fine corsa."
+                }
+              ]
             },
             {
-              id: "A_1B",
-              code: "1B",
-              name: "Seated Leg Curl (Femorali Seduto)",
-              sets: 2,
-              minReps: 10,
-              maxReps: 12,
-              stepKg: 2.5,
-              defaultKg: 25,
-              setup: "Allinea il perno della macchina con il centro del ginocchio. Cuscino ben saldo sulle cosce, rullo appena sopra i talloni.",
-              exec: "Piega le gambe portando i talloni sotto il sedile espirando. Ferma 1 secondo, poi risali frenando il peso per 3 secondi.",
-              err: "Slanciarsi in avanti con il busto o far sbattere i pesi a fine corsa."
+              pair: "Coppia 2 · Torace & Dorso (Alterna 2A e 2B · Pausa 60s)",
+              items: [
+                {
+                  id: "S_A_2A", code: "2A", name: "Chest Press (Macchina)", sets: 2, minReps: 8, maxReps: 10, stepKg: 2.5, defaultKg: 25,
+                  setup: "Sedile regolato con le maniglie all'altezza del centro del petto (mai alle spalle). Scapole appoggiate, spalle basse.",
+                  exec: "Spingi in avanti espirando fino a quasi distendere i gomiti. Torna indietro in 3 secondi inspirando.",
+                  err: "Alzare le spalle verso le orecchie durante la spinta o staccare le scapole."
+                },
+                {
+                  id: "S_A_2B", code: "2B", name: "Rematore con Manubrio su Panca", sets: 2, minReps: 8, maxReps: 10, stepKg: 1, defaultKg: 12,
+                  setup: "Ginocchio e mano dello stesso lato appoggiati su panca piana, schiena piatta parallela al suolo, altro piede ben piantato a terra.",
+                  exec: "Tira il manubrio verso l'anca (non verso la spalla) con gomito vicino al fianco espirando. Ferma 1 sec in alto, scendi in 3 secondi.",
+                  err: "Ruotare il busto o dare strattoni con la zona lombare per alzare il peso."
+                }
+              ]
+            },
+            {
+              pair: "Coppia 3 · Spalle, Cuffia & Core (Alterna 3A e 3B · Pausa 45–60s)",
+              items: [
+                {
+                  id: "S_A_3A", code: "3A", name: "Face Pull ai Cavi (Cuffia Rotatori)", sets: 2, minReps: 12, maxReps: 15, stepKg: 1.25, defaultKg: 10,
+                  setup: "Carrucola all'altezza del viso con corda doppia. Afferra con i pollici rivolti verso di te, due passi indietro, braccia tese.",
+                  exec: "Tira la corda verso la fronte allargando i gomiti e ruotando indietro i polsi (mani ai lati delle orecchie) espirando. Torna in 3 secondi.",
+                  err: "Tirare verso il petto o inarcare la schiena all'indietro."
+                },
+                {
+                  id: "S_A_3B", code: "3B", name: "Plank (35s) + Pushdown Tricipiti Cavo", sets: 2, minReps: 12, maxReps: 15, stepKg: 1.25, defaultKg: 15,
+                  setup: "Prima 35s di Plank (gomiti sotto le spalle, corpo teso, respiro regolare). Subito dopo al cavo alto con barra/corda e gomiti ai fianchi.",
+                  exec: "Al cavo, estendi completamente gli avambracci verso il basso espirando. Risali con gli avambracci in 3 secondi tenendo i gomiti immobili.",
+                  err: "Trattenere il fiato nel Plank o muovere i gomiti avanti e indietro nel Pushdown."
+                }
+              ]
             }
-          ]
-        },
-        {
-          pair: "Coppia 2 · Torace & Dorso (Alterna 2A e 2B · Pausa 60s)",
-          items: [
+          ],
+          B: [
             {
-              id: "A_2A",
-              code: "2A",
-              name: "Chest Press (Macchina)",
-              sets: 2,
-              minReps: 8,
-              maxReps: 10,
-              stepKg: 2.5,
-              defaultKg: 25,
-              setup: "Sedile regolato con le maniglie all'altezza del centro del petto (mai alle spalle). Scapole appoggiate, spalle basse.",
-              exec: "Spingi in avanti espirando fino a quasi distendere i gomiti. Torna indietro in 3 secondi inspirando.",
-              err: "Alzare le spalle verso le orecchie durante la spinta o staccare le scapole."
+              pair: "Coppia 1 · Gambe Funzionali (Alterna 1A e 1B · Pausa 60s)",
+              items: [
+                {
+                  id: "S_B_1A", code: "1A", name: "Goblet Squat con Manubrio", sets: 2, minReps: 10, maxReps: 12, stepKg: 2, defaultKg: 12,
+                  setup: "Tieni un manubrio verticale davanti al petto con entrambe le mani sotto il disco superiore. Piedi poco più larghi delle spalle.",
+                  exec: "Scendi in 3 secondi inspirando piegando ginocchia e anche con petto alto e talloni a terra. Risali spingendo sui talloni ed espirando.",
+                  err: "Sollevare i talloni da terra o far cadere le ginocchia verso l'interno."
+                },
+                {
+                  id: "S_B_1B", code: "1B", name: "Lying Leg Curl (Femorali Sdraiato)", sets: 2, minReps: 10, maxReps: 12, stepKg: 2.5, defaultKg: 20,
+                  setup: "Sdraiati a pancia in giù con le rotule appena fuori dal bordo inferiore della panca e il rullo appoggiato dietro le caviglie.",
+                  exec: "Porta i talloni verso i glutei espirando in 1–2 sec, ferma 1 secondo, ridiscendi in 3 secondi mantenendo il bacino premuto sul cuscino.",
+                  err: "Sollevare il bacino inarcando la zona lombare mentre pieghi le gambe."
+                }
+              ]
             },
             {
-              id: "A_2B",
-              code: "2B",
-              name: "Rematore con Manubrio su Panca",
-              sets: 2,
-              minReps: 8,
-              maxReps: 10,
-              stepKg: 1,
-              defaultKg: 12,
-              setup: "Ginocchio e mano dello stesso lato appoggiati su panca piana, schiena piatta parallela al suolo, altro piede ben piantato a terra.",
-              exec: "Tira il manubrio verso l'anca (non verso la spalla) con gomito vicino al fianco espirando. Ferma 1 sec in alto, scendi in 3 secondi.",
-              err: "Ruotare il busto o dare strattoni con la zona lombare per alzare il peso."
-            }
-          ]
-        },
-        {
-          pair: "Coppia 3 · Spalle, Cuffia & Core (Alterna 3A e 3B · Pausa 45–60s)",
-          items: [
-            {
-              id: "A_3A",
-              code: "3A",
-              name: "Face Pull ai Cavi (Cuffia Rotatori)",
-              sets: 2,
-              minReps: 12,
-              maxReps: 15,
-              stepKg: 1.25,
-              defaultKg: 10,
-              setup: "Carrucola all'altezza del viso con corda doppia. Afferra con i pollici rivolti verso di te, due passi indietro, braccia tese.",
-              exec: "Tira la corda verso la fronte allargando i gomiti e ruotando indietro i polsi (mani ai lati delle orecchie) espirando. Torna in 3 secondi.",
-              err: "Tirare verso il petto o inarcare la schiena all'indietro."
+              pair: "Coppia 2 · Spinta & Tirata Verticale (Alterna 2A e 2B · Pausa 60s)",
+              items: [
+                {
+                  id: "S_B_2A", code: "2A", name: "Spinte Spalle Manubri (Seduto)", sets: 2, minReps: 8, maxReps: 10, stepKg: 1, defaultKg: 8,
+                  setup: "Panca con schienale a 75–80°. Manubri all'altezza delle orecchie, palmi in avanti, gomiti leggermente più avanti rispetto al busto.",
+                  exec: "Spingi i manubri verso l'alto espirando senza farli sbattere e senza bloccare i gomiti. Scendi in 3 secondi inspirando fino alle orecchie.",
+                  err: "Inarcare la bassa schiena staccandola dallo schienale durante la spinta."
+                },
+                {
+                  id: "S_B_2B", code: "2B", name: "Lat Pulldown (Tirata Verticale)", sets: 2, minReps: 8, maxReps: 12, stepKg: 2.5, defaultKg: 30,
+                  setup: "Blocca bene le cosce sotto il cuscino. Presa poco più larga delle spalle (o maniglia neutra triangolare). Petto aperto verso l'alto.",
+                  exec: "Tira la sbarra fino alla parte alta dello sterno portando i gomiti verso il basso ed espirando. Risali in 3 secondi inspirando.",
+                  err: "Dondolare eccessivamente indietro con la schiena o tirare la sbarra dietro la nuca."
+                }
+              ]
             },
             {
-              id: "A_3B",
-              code: "3B",
-              name: "Plank (35s) + Pushdown Tricipiti Cavo",
-              sets: 2,
-              minReps: 12,
-              maxReps: 15,
-              stepKg: 1.25,
-              defaultKg: 15,
-              setup: "Prima 35s di Plank (gomiti sotto le spalle, corpo teso, respiro regolare). Subito dopo al cavo alto con barra/corda e gomiti ai fianchi.",
-              exec: "Al cavo, estendi completamente gli avambracci verso il basso espirando. Risali con gli avambracci in 3 secondi tenendo i gomiti immobili.",
-              err: "Trattenere il fiato nel Plank o muovere i gomiti avanti e indietro nel Pushdown."
-            }
-          ]
-        }
-      ],
-      B: [
-        {
-          pair: "Coppia 1 · Gambe Funzionali (Alterna 1A e 1B · Pausa 60s)",
-          items: [
-            {
-              id: "B_1A",
-              code: "1A",
-              name: "Goblet Squat con Manubrio",
-              sets: 2,
-              minReps: 10,
-              maxReps: 12,
-              stepKg: 2,
-              defaultKg: 12,
-              setup: "Tieni un manubrio verticale davanti al petto con entrambe le mani sotto il disco superiore. Piedi poco più larghi delle spalle.",
-              exec: "Scendi in 3 secondi inspirando piegando ginocchia e anche con petto alto e talloni a terra. Risali spingendo sui talloni ed espirando.",
-              err: "Sollevare i talloni da terra o far cadere le ginocchia verso l'interno."
-            },
-            {
-              id: "B_1B",
-              code: "1B",
-              name: "Lying Leg Curl (Femorali Sdraiato)",
-              sets: 2,
-              minReps: 10,
-              maxReps: 12,
-              stepKg: 2.5,
-              defaultKg: 20,
-              setup: "Sdraiati a pancia in giù con le rotule appena fuori dal bordo inferiore della panca e il rullo appoggiato dietro le caviglie.",
-              exec: "Porta i talloni verso i glutei espirando in 1–2 sec, ferma 1 secondo, ridiscendi in 3 secondi mantenendo il bacino premuto sul cuscino.",
-              err: "Sollevare il bacino inarcando la zona lombare mentre pieghi le gambe."
-            }
-          ]
-        },
-        {
-          pair: "Coppia 2 · Spinta & Tirata Verticale (Alterna 2A e 2B · Pausa 60s)",
-          items: [
-            {
-              id: "B_2A",
-              code: "2A",
-              name: "Spinte Spalle Manubri (Seduto)",
-              sets: 2,
-              minReps: 8,
-              maxReps: 10,
-              stepKg: 1,
-              defaultKg: 8,
-              setup: "Panca con schienale a 75–80°. Manubri all'altezza delle orecchie, palmi in avanti, gomiti leggermente più avanti rispetto al busto.",
-              exec: "Spingi i manubri verso l'alto espirando senza farli sbattere e senza bloccare i gomiti. Scendi in 3 secondi inspirando fino alle orecchie.",
-              err: "Inarcare la bassa schiena staccandola dallo schienale durante la spinta."
-            },
-            {
-              id: "B_2B",
-              code: "2B",
-              name: "Lat Pulldown (Tirata Verticale)",
-              sets: 2,
-              minReps: 8,
-              maxReps: 12,
-              stepKg: 2.5,
-              defaultKg: 30,
-              setup: "Blocca bene le cosce sotto il cuscino. Presa poco più larga delle spalle (o maniglia neutra triangolare). Petto aperto verso l'alto.",
-              exec: "Tira la sbarra fino alla parte alta dello sterno portando i gomiti verso il basso ed espirando. Risali in 3 secondi inspirando.",
-              err: "Dondolare eccessivamente indietro con la schiena o tirare la sbarra dietro la nuca."
-            }
-          ]
-        },
-        {
-          pair: "Coppia 3 · Trasporto & Braccia (Alterna 3A e 3B · Pausa 60s)",
-          items: [
-            {
-              id: "B_3A",
-              code: "3A",
-              name: "Farmer's Carry (Camminata con Pesi)",
-              sets: 2,
-              minReps: 30,
-              maxReps: 40,
-              unitLabel: "sec/m",
-              stepKg: 2,
-              defaultKg: 14,
-              setup: "Afferra due manubri pesanti lungo i fianchi. Spalle indietro e basse, addome contratto, sguardo dritto avanti.",
-              exec: "Cammina a passi brevi e controllati per 30–40 secondi/metri mantenendo il busto immobile e respirando in modo fluido.",
-              err: "Oscillare lateralmente con le spalle o trattenere il fiato mentre cammini."
-            },
-            {
-              id: "B_3B",
-              code: "3B",
-              name: "Curl Bicipiti Manubri + Calf Raise",
-              sets: 2,
-              minReps: 10,
-              maxReps: 12,
-              stepKg: 1,
-              defaultKg: 8,
-              setup: "In piedi, manubri ai fianchi. Subito dopo il curl, passa alla macchina polpacci (o gradino) con avampiedi in appoggio.",
-              exec: "Curl: piega i gomiti ruotando i palmi in alto ed espirando, scendi in 3 sec. Polpacci: spingi sulle punte espirando, ferma 1s, scendi in 3s.",
-              err: "Slanciare la schiena nel curl o rimbalzare velocemente sui polpacci."
+              pair: "Coppia 3 · Trasporto & Braccia (Alterna 3A e 3B · Pausa 60s)",
+              items: [
+                {
+                  id: "S_B_3A", code: "3A", name: "Farmer's Carry (Camminata con Pesi)", sets: 2, minReps: 30, maxReps: 40, unitLabel: "sec/m", stepKg: 2, defaultKg: 14,
+                  setup: "Afferra due manubri pesanti lungo i fianchi. Spalle indietro e basse, addome contratto, sguardo dritto avanti.",
+                  exec: "Cammina a passi brevi e controllati per 30–40 secondi/metri mantenendo il busto immobile e respirando in modo fluido.",
+                  err: "Oscillare lateralmente con le spalle o trattenere il fiato mentre cammini."
+                },
+                {
+                  id: "S_B_3B", code: "3B", name: "Curl Bicipiti Manubri + Calf Raise", sets: 2, minReps: 10, maxReps: 12, stepKg: 1, defaultKg: 8,
+                  setup: "In piedi, manubri ai fianchi. Subito dopo il curl, passa alla macchina polpacci (o gradino) con avampiedi in appoggio.",
+                  exec: "Curl: piega i gomiti ruotando i palmi in alto ed espirando, scendi in 3 sec. Polpacci: spingi sulle punte espirando, ferma 1s, scendi in 3s.",
+                  err: "Slanciare la schiena nel curl o rimbalzare velocemente sui polpacci."
+                }
+              ]
             }
           ]
         }
-      ]
+      },
+
+      leone: {
+        label: "Leone",
+        sub: "Profilo Leone (16 anni) · Costruzione & Tecnica",
+        tabASub: "Goblet Squat · Chest · Rematore · Core",
+        tabBSub: "Leg Press · Lat Pulldown · Spalle · Braccia",
+        breathNote: "<strong>Regola d'oro (Leone):</strong> Impara prima il gesto perfetto. Fermati sempre con <strong>2–3 ripetizioni di margine</strong> (zero cedimento estremo). Niente cardio a fine seduta: conserva energie e calorie per crescere.",
+        mobTitle: "Fase 0 · Riscaldamento Generale (5 min)",
+        mobilityItems: [
+          { id: "mob1", title: "1. Vogatore o Cyclette leggera (3 min)", desc: "Ritmo blando solo per scaldare muscoli e articolazioni senza stancarti." },
+          { id: "mob2", title: "2. Circonduzioni braccia e spalle (10 rip)", desc: "Movimenti ampi e lenti avanti e indietro per preparare la cuffia dei rotatori." },
+          { id: "mob3", title: "3. Squat a corpo libero (10 rip)", desc: "Scendi controllato mantenendo i talloni ben appoggiati a terra e la schiena dritta." }
+        ],
+        hasCardio: false,
+        hasDeload: false,
+        restButtons: [90, 60],
+        rulesHtml: `
+          <p style="margin:0 0 8px 0;"><strong>1. Obiettivo (174 cm × 55 kg):</strong> Costruire forza, coordinazione e massa magra pulita senza sovraccaricare le articolazioni in crescita.</p>
+          <p style="margin:0 0 8px 0;"><strong>2. Carico & Margine:</strong> Usa un peso che ti permette di fare 8–12 ripetizioni pulite lasciandone sempre <strong>2–3 in riserva</strong>. Mai storcere la schiena per chiudere una ripetizione.</p>
+          <p style="margin:0;"><strong>3. Alimentazione & Sonno:</strong> Mangia a sufficienza (carboidrati + ~90g proteine al giorno) e dormi 8–9 ore: i muscoli crescono a riposo, non in palestra.</p>
+        `,
+        workouts: {
+          A: [
+            {
+              pair: "Esercizi Principali · Gambe & Spinta (Recupero 90s)",
+              items: [
+                {
+                  id: "L_A_1", code: "1", name: "Goblet Squat con Manubrio", sets: 3, minReps: 8, maxReps: 12, stepKg: 2, defaultKg: 8,
+                  setup: "Tieni un manubrio verticale davanti al petto con entrambe le mani. Piedi poco più larghi delle spalle, punte leggermente in fuori.",
+                  exec: "Scendi controllando in 2–3 secondi inspirando, schiena dritta e talloni a terra. Risali spingendo sui talloni ed espirando.",
+                  err: "Alzare i talloni o far chiudere le ginocchia verso l'interno mentre risali."
+                },
+                {
+                  id: "L_A_2", code: "2", name: "Chest Press Machine (o Piegamenti)", sets: 3, minReps: 8, maxReps: 12, stepKg: 2, defaultKg: 15,
+                  setup: "Sedile regolato con maniglie al centro del petto. Scapole appoggiate allo schienale, spalle basse lontane dalle orecchie.",
+                  exec: "Spingi in avanti espirando fino a quasi distendere i gomiti. Torna indietro in 2–3 secondi inspirando.",
+                  err: "Alzare le spalle verso il collo o staccare la schiena dallo schienale."
+                },
+                {
+                  id: "L_A_3", code: "3", name: "Rematore con Manubrio su Panca", sets: 3, minReps: 8, maxReps: 12, stepKg: 1, defaultKg: 8,
+                  setup: "Ginocchio e mano dello stesso lato appoggiati su panca piana, schiena piatta parallela al suolo, altro piede ben piantato a terra.",
+                  exec: "Tira il manubrio verso l'anca con il gomito vicino al fianco espirando. Scendi controllando in 2–3 secondi inspirando.",
+                  err: "Ruotare il busto per aiutarti a tirare su il manubrio."
+                }
+              ]
+            },
+            {
+              pair: "Complementari · Femorali & Core (Recupero 45–60s)",
+              items: [
+                {
+                  id: "L_A_4", code: "4", name: "Seated Leg Curl (Femorali Seduto)", sets: 2, minReps: 10, maxReps: 12, stepKg: 2.5, defaultKg: 15,
+                  setup: "Allinea il perno della macchina con il centro del ginocchio. Cuscino ben fermo sulle cosce, rullo appena sopra i talloni.",
+                  exec: "Piega le gambe portando i talloni sotto il sedile espirando. Risali frenando il peso in 2–3 secondi senza far sbattere i dischi.",
+                  err: "Darsi lo slancio con la schiena in avanti."
+                },
+                {
+                  id: "L_A_5", code: "5", name: "Plank a Terra (Tenuta Addome)", sets: 3, minReps: 30, maxReps: 45, unitLabel: "sec", stepKg: 0, defaultKg: 0,
+                  setup: "Gomiti a terra esattamente sotto le spalle, corpo teso in linea retta dalla testa ai talloni.",
+                  exec: "Contrai addome e glutei mantenendo la posizione per 30–45 secondi respirando in modo regolare e continuo.",
+                  err: "Trattenere il fiato o lasciar cadere il bacino verso il pavimento."
+                }
+              ]
+            }
+          ],
+          B: [
+            {
+              pair: "Esercizi Principali · Gambe, Dorso & Spalle (Recupero 90s)",
+              items: [
+                {
+                  id: "L_B_1", code: "1", name: "Leg Press (Macchina)", sets: 3, minReps: 10, maxReps: 12, stepKg: 2.5, defaultKg: 30,
+                  setup: "Schienale regolato per avere circa 90° alle ginocchia in partenza. Piedi larghezza spalle sulla pedana.",
+                  exec: "Spingi la pedana espirando senza bloccare del tutto le ginocchia. Scendi controllando in 2–3 secondi inspirando.",
+                  err: "Staccare il sedere o la zona lombare dallo schienale a fine discesa."
+                },
+                {
+                  id: "L_B_2", code: "2", name: "Lat Pulldown (Tirata alla Sbarra)", sets: 3, minReps: 8, maxReps: 12, stepKg: 2.5, defaultKg: 20,
+                  setup: "Blocca le cosce sotto il cuscino. Presa poco più larga delle spalle, petto aperto verso l'alto.",
+                  exec: "Tira la sbarra fino alla parte alta dello sterno portando i gomiti verso il basso ed espirando. Risali in 2–3 secondi.",
+                  err: "Dondolare eccessivamente indietro con il busto per tirare il peso."
+                },
+                {
+                  id: "L_B_3", code: "3", name: "Spinte Spalle Manubri da Seduto", sets: 3, minReps: 8, maxReps: 12, stepKg: 1, defaultKg: 6,
+                  setup: "Panca con schienale quasi verticale (75–80°). Manubri all'altezza delle orecchie, palmi in avanti, gomiti leggermente avanti.",
+                  exec: "Spingi i manubri verso l'alto espirando senza farli sbattere. Scendi in 2–3 secondi inspirando fino alle orecchie.",
+                  err: "Inarcare la bassa schiena staccandola dallo schienale."
+                }
+              ]
+            },
+            {
+              pair: "Complementari · Postura & Braccia (Recupero 60s)",
+              items: [
+                {
+                  id: "L_B_4", code: "4", name: "Face Pull ai Cavi (Postura Spalle)", sets: 2, minReps: 12, maxReps: 15, stepKg: 1.25, defaultKg: 7.5,
+                  setup: "Carrucola all'altezza del viso con corda doppia. Afferra con i pollici verso di te, due passi indietro, braccia tese.",
+                  exec: "Tira la corda verso la fronte allargando i gomiti e ruotando indietro i polsi espirando. Torna in 2–3 secondi.",
+                  err: "Inarcare la schiena all'indietro o tirare verso il petto."
+                },
+                {
+                  id: "L_B_5", code: "5", name: "Curl Bicipiti + Pushdown Tricipiti", sets: 2, minReps: 10, maxReps: 12, stepKg: 1, defaultKg: 6,
+                  setup: "Esegui prima i bicipiti con manubri (gomiti fermi ai fianchi) e subito dopo i tricipiti al cavo alto con barra o corda.",
+                  exec: "Movimenti fluidi e controllati senza slanciare la schiena, espirando in chiusura/spinta e frenando in ritorno.",
+                  err: "Muovere i gomiti avanti e indietro per aiutarti."
+                }
+              ]
+            }
+          ]
+        }
+      }
     };
 
     // --- STATE ---
-    const STORAGE_KEY = "gym_hit_2026_state_v1";
+    const STORAGE_KEY = "gym_hit_2026_multiprofile_v2";
     let state = {
-      currentTab: "A",
-      completedCount: 0,
-      deloadMode: false,
-      mobility: { mob1: false, mob2: false, mob3: false },
-      logs: {}
+      activeProfile: "simone",
+      profiles: {
+        simone: {
+          currentTab: "A",
+          completedCount: 0,
+          deloadMode: false,
+          mobility: { mob1: false, mob2: false, mob3: false },
+          logs: {}
+        },
+        leone: {
+          currentTab: "A",
+          completedCount: 0,
+          deloadMode: false,
+          mobility: { mob1: false, mob2: false, mob3: false },
+          logs: {}
+        }
+      }
     };
+
+    function getActiveState() {
+      return state.profiles[state.activeProfile];
+    }
+
+    function getActiveConfig() {
+      return PROFILES_DATA[state.activeProfile];
+    }
 
     function loadState() {
       try {
+        // Migrate old v1 data for Simone if present
+        const oldRaw = localStorage.getItem("gym_hit_2026_state_v1");
         const raw = localStorage.getItem(STORAGE_KEY);
         if (raw) {
           const parsed = JSON.parse(raw);
           state = { ...state, ...parsed };
+        } else if (oldRaw) {
+          const oldParsed = JSON.parse(oldRaw);
+          state.profiles.simone.currentTab = oldParsed.currentTab || "A";
+          state.profiles.simone.completedCount = oldParsed.completedCount || 0;
+          state.profiles.simone.deloadMode = !!oldParsed.deloadMode;
+          if (oldParsed.logs) {
+            Object.keys(oldParsed.logs).forEach(k => {
+              state.profiles.simone.logs["S_" + k] = oldParsed.logs[k];
+            });
+          }
         }
       } catch (e) { console.error(e); }
 
-      // Initialize missing exercise logs
-      ["A", "B"].forEach(w => {
-        WORKOUTS[w].forEach(group => {
-          group.items.forEach(ex => {
-            if (!state.logs[ex.id]) {
-              state.logs[ex.id] = {
-                s1: { kg: ex.defaultKg, reps: ex.minReps },
-                s2: { kg: ex.defaultKg, reps: ex.minReps }
-              };
-            }
+      // Ensure all exercises for both profiles are initialized
+      ["simone", "leone"].forEach(profKey => {
+        const pData = PROFILES_DATA[profKey];
+        const pState = state.profiles[profKey];
+        ["A", "B"].forEach(w => {
+          pData.workouts[w].forEach(group => {
+            group.items.forEach(ex => {
+              if (!pState.logs[ex.id]) {
+                const setsObj = {};
+                for (let s = 1; s <= ex.sets; s++) {
+                  setsObj["s" + s] = { kg: ex.defaultKg, reps: ex.minReps };
+                }
+                pState.logs[ex.id] = setsObj;
+              }
+            });
           });
         });
       });
@@ -1111,44 +1215,101 @@
 
     // --- UI RENDER ---
     function renderAll() {
+      const pState = getActiveState();
+      const pConf = getActiveConfig();
+      const isLeone = state.activeProfile === "leone";
+
+      // Theme & Header
+      document.body.classList.toggle("profile-leone", isLeone);
+      const accentColor = isLeone ? "#38bdf8" : "#95D600";
+      document.getElementById("logoArc").setAttribute("stroke", accentColor);
+      document.getElementById("logoTop").setAttribute("fill", accentColor);
+      document.getElementById("logoBot").setAttribute("fill", accentColor);
+      document.getElementById("headerSub").textContent = pConf.sub;
+
+      // Profile buttons
+      document.getElementById("profSimone").classList.toggle("active", !isLeone);
+      document.getElementById("profLeone").classList.toggle("active", isLeone);
+
       // Week & Deload UI
-      const weekNum = Math.floor(state.completedCount / 3) + 1;
-      document.getElementById("weekBadge").textContent = `Settimana ${weekNum} · Sedute: ${state.completedCount}`;
+      const weekNum = Math.floor(pState.completedCount / 3) + 1;
+      document.getElementById("weekBadge").textContent = `${pConf.label} · Settimana ${weekNum} · Sedute: ${pState.completedCount}`;
       
       const deloadBtn = document.getElementById("deloadBtn");
-      deloadBtn.textContent = state.deloadMode ? "Scarico -30%: ON" : "Scarico -30%: OFF";
-      deloadBtn.classList.toggle("active", state.deloadMode);
-
       const alertBox = document.getElementById("deloadAlert");
-      if (state.completedCount >= 15 && !state.deloadMode) {
-        alertBox.classList.add("show");
+      if (pConf.hasDeload) {
+        deloadBtn.style.display = "inline-block";
+        deloadBtn.textContent = pState.deloadMode ? "Scarico -30%: ON" : "Scarico -30%: OFF";
+        deloadBtn.classList.toggle("active", pState.deloadMode);
+        alertBox.classList.toggle("show", pState.completedCount >= 15 && !pState.deloadMode);
       } else {
+        deloadBtn.style.display = "none";
         alertBox.classList.remove("show");
       }
 
       // Tabs
-      document.getElementById("tabA").classList.toggle("active", state.currentTab === "A");
-      document.getElementById("tabB").classList.toggle("active", state.currentTab === "B");
+      document.getElementById("tabA").classList.toggle("active", pState.currentTab === "A");
+      document.getElementById("tabB").classList.toggle("active", pState.currentTab === "B");
+      document.getElementById("tabASub").textContent = pConf.tabASub;
+      document.getElementById("tabBSub").textContent = pConf.tabBSub;
 
-      // Mobility
-      document.getElementById("mob1").checked = !!state.mobility.mob1;
-      document.getElementById("mob2").checked = !!state.mobility.mob2;
-      document.getElementById("mob3").checked = !!state.mobility.mob3;
+      // Breath bar
+      document.getElementById("breathBar").innerHTML = pConf.breathNote;
+
+      // Mobility / Warmup
+      document.getElementById("mobTitle").textContent = pConf.mobTitle;
+      const mobCont = document.getElementById("mobilityContainer");
+      mobCont.innerHTML = pConf.mobilityItems.map(item => `
+        <label class="mob-item">
+          <input type="checkbox" id="${item.id}" ${pState.mobility[item.id] ? 'checked' : ''} onchange="saveMobility()" />
+          <div class="mob-text">
+            <strong>${item.title}</strong>
+            <span>${item.desc}</span>
+          </div>
+        </label>
+      `).join("");
+
+      // Rest Dock Buttons
+      const r1 = pConf.restButtons[0];
+      const r2 = pConf.restButtons[1];
+      document.getElementById("restBtns").innerHTML = `
+        <button class="d-btn primary" onclick="startRest(${r1})">${r1}s</button>
+        <button class="d-btn" onclick="startRest(${r2})">${r2}s</button>
+        <button class="d-btn" onclick="stopRest()">Stop</button>
+      `;
+
+      // Cardio Section
+      document.getElementById("cardioSection").style.display = pConf.hasCardio ? "block" : "none";
 
       // Exercises
       const container = document.getElementById("exercisesContainer");
       container.innerHTML = "";
 
-      WORKOUTS[state.currentTab].forEach(group => {
+      pConf.workouts[pState.currentTab].forEach(group => {
         const pLabel = document.createElement("div");
         pLabel.className = "pair-label";
         pLabel.textContent = group.pair;
         container.appendChild(pLabel);
 
         group.items.forEach(ex => {
-          const log = state.logs[ex.id];
-          const readyToProgress = !state.deloadMode && (log.s1.reps >= ex.maxReps && log.s2.reps >= ex.maxReps);
+          const log = pState.logs[ex.id];
           const unit = ex.unitLabel || "rip";
+          
+          // Check if all sets reached maxReps
+          let allMax = true;
+          for (let s = 1; s <= ex.sets; s++) {
+            if (!log["s" + s] || log["s" + s].reps < ex.maxReps) {
+              allMax = false;
+              break;
+            }
+          }
+          const readyToProgress = !pState.deloadMode && allMax && ex.stepKg > 0;
+
+          let setsHtml = "";
+          for (let s = 1; s <= ex.sets; s++) {
+            if (!log["s" + s]) log["s" + s] = { kg: ex.defaultKg, reps: ex.minReps };
+            setsHtml += renderSetRow(ex, s, log["s" + s], unit, pState.deloadMode, isLeone);
+          }
 
           const card = document.createElement("div");
           card.className = "ex-card";
@@ -1156,7 +1317,7 @@
             <div class="ex-top">
               <div style="min-width:0;">
                 <h3 class="ex-name"><span class="ex-code">${ex.code}</span>${ex.name}</h3>
-                <div class="ex-meta">Target: <strong>${ex.sets} serie × ${ex.minReps}–${ex.maxReps} ${unit}</strong> · Tempo 2·1·3</div>
+                <div class="ex-meta">Target: <strong>${ex.sets} serie × ${ex.minReps}–${ex.maxReps} ${unit}</strong></div>
               </div>
               <button class="guide-btn" onclick="toggleGuide('${ex.id}')">📖 Tecnica</button>
             </div>
@@ -1168,28 +1329,35 @@
             </div>
 
             <div class="prog-banner ${readyToProgress ? 'show' : ''}">
-              🚀 Hai chiuso ${ex.maxReps}/${ex.maxReps} ${unit}! Prossima seduta: +${ex.stepKg} kg e riparti da ${ex.minReps} ${unit}.
+              🚀 Hai chiuso tutte le serie al massimo (${ex.maxReps} ${unit})! Prossima seduta: +${ex.stepKg} kg e riparti da ${ex.minReps} ${unit}.
             </div>
 
             <div class="sets-wrap">
-              ${renderSetRow(ex, 1, log.s1, unit)}
-              ${renderSetRow(ex, 2, log.s2, unit)}
+              ${setsHtml}
             </div>
           `;
           container.appendChild(card);
         });
       });
+
+      // Modal Rules
+      document.getElementById("modalTitle").textContent = `Regole (${pConf.label}) & Dati`;
+      document.getElementById("modalRules").innerHTML = pConf.rulesHtml;
     }
 
-    function renderSetRow(ex, setNum, setData, unit) {
+    function renderSetRow(ex, setNum, setData, unit, deloadMode, isLeone) {
       const deloadKg = (Math.round((setData.kg * 0.7) * 2) / 2).toFixed(1).replace(/\.0$/, "");
+      const rirLabel = isLeone ? "(2–3 RIR)" : (setNum === ex.sets ? "(0–1 RIR)" : "(1–2 RIR)");
+      const isBodyweight = ex.stepKg === 0;
+
       return `
         <div class="set-row">
           <div class="set-head">
-            <span>SERIE ${setNum} ${setNum === 2 ? '(0–1 RIR)' : '(1–2 RIR)'}</span>
-            ${state.deloadMode ? `<span class="deload-target">Usa scarico: ${deloadKg} kg</span>` : ''}
+            <span>SERIE ${setNum} ${rirLabel}</span>
+            ${deloadMode && !isBodyweight ? `<span class="deload-target">Usa scarico: ${deloadKg} kg</span>` : ''}
           </div>
-          <div class="controls-grid">
+          <div class="controls-grid" style="${isBodyweight ? 'grid-template-columns: 1fr;' : ''}">
+            ${!isBodyweight ? `
             <div class="stepper-group">
               <div class="stepper-label">Peso (kg)</div>
               <div class="stepper-controls">
@@ -1198,8 +1366,9 @@
                 <button class="step-btn" onclick="updateLog('${ex.id}', ${setNum}, 'kg', ${ex.stepKg})">+</button>
               </div>
             </div>
+            ` : ''}
             <div class="stepper-group">
-              <div class="stepper-label">${unit === 'rip' ? 'Ripetizioni' : 'Secondi/Metri'}</div>
+              <div class="stepper-label">${unit === 'rip' ? 'Ripetizioni' : (unit === 'sec' ? 'Secondi' : 'Secondi/Metri')}</div>
               <div class="stepper-controls">
                 <button class="step-btn" onclick="updateLog('${ex.id}', ${setNum}, 'reps', ${unit === 'rip' ? -1 : -5})">−</button>
                 <div class="step-val">${setData.reps}</div>
@@ -1211,12 +1380,22 @@
       `;
     }
 
+    function switchProfile(profKey) {
+      state.activeProfile = profKey;
+      stopRest();
+      resetCadence();
+      saveState();
+      renderAll();
+      showToast(`Profilo attivo: ${PROFILES_DATA[profKey].label}`);
+    }
+
     function updateLog(exId, setNum, field, delta) {
-      const key = setNum === 1 ? "s1" : "s2";
-      let val = state.logs[exId][key][field] + delta;
+      const pState = getActiveState();
+      const key = "s" + setNum;
+      let val = pState.logs[exId][key][field] + delta;
       if (val < 0) val = 0;
       val = Math.round(val * 100) / 100;
-      state.logs[exId][key][field] = val;
+      pState.logs[exId][key][field] = val;
       saveState();
       renderAll();
     }
@@ -1227,36 +1406,40 @@
     }
 
     function selectWorkout(tab) {
-      state.currentTab = tab;
+      getActiveState().currentTab = tab;
       saveState();
       renderAll();
     }
 
     function toggleDeload() {
-      state.deloadMode = !state.deloadMode;
+      const pState = getActiveState();
+      pState.deloadMode = !pState.deloadMode;
       saveState();
       renderAll();
-      showToast(state.deloadMode ? "Scarico -30% attivato" : "Scarico disattivato");
+      showToast(pState.deloadMode ? "Scarico -30% attivato" : "Scarico disattivato");
     }
 
     function saveMobility() {
-      state.mobility.mob1 = document.getElementById("mob1").checked;
-      state.mobility.mob2 = document.getElementById("mob2").checked;
-      state.mobility.mob3 = document.getElementById("mob3").checked;
+      const pState = getActiveState();
+      pState.mobility.mob1 = document.getElementById("mob1").checked;
+      pState.mobility.mob2 = document.getElementById("mob2").checked;
+      pState.mobility.mob3 = document.getElementById("mob3").checked;
       saveState();
     }
 
     function completeWorkout() {
-      state.completedCount += 1;
-      state.mobility = { mob1: false, mob2: false, mob3: false };
-      state.currentTab = state.currentTab === "A" ? "B" : "A";
+      const pState = getActiveState();
+      const pConf = getActiveConfig();
+      pState.completedCount += 1;
+      pState.mobility = { mob1: false, mob2: false, mob3: false };
+      pState.currentTab = pState.currentTab === "A" ? "B" : "A";
       saveState();
       renderAll();
       window.scrollTo({ top: 0, behavior: "smooth" });
-      showToast(`Seduta registrata! Prossima: Seduta ${state.currentTab}`);
+      showToast(`Seduta ${pConf.label} salvata! Prossima: ${pState.currentTab}`);
     }
 
-    // --- AUDIO ENGINE (Web Audio API) ---
+    // --- AUDIO ENGINE ---
     let audioCtx = null;
     function beep(freq = 600, duration = 0.08, type = "sine") {
       try {
@@ -1311,16 +1494,17 @@
 
     function stopRest() {
       clearInterval(restInterval);
-      restRemaining = 60;
-      document.getElementById("restDisplay").textContent = "01:00";
+      const defaultRest = getActiveConfig().restButtons[0];
+      restRemaining = defaultRest;
+      document.getElementById("restDisplay").textContent = formatTime(defaultRest);
       document.getElementById("restStatus").textContent = "PRONTO";
       document.getElementById("restStatus").style.color = "var(--neon)";
     }
 
-    // --- CADENCE METRONOME (2s PUSH - 1s HOLD - 3s DOWN = 6s cycle) ---
+    // --- CADENCE METRONOME (2s PUSH - 1s HOLD - 3s DOWN) ---
     let cadenceInterval = null;
     let cadenceRunning = false;
-    let cadenceTick = 0; // 0..5
+    let cadenceTick = 0;
     let repCount = 0;
 
     function toggleCadence() {
@@ -1381,7 +1565,7 @@
     // --- CARDIO TIMER ---
     let cardioInterval = null;
     let cardioRunning = false;
-    let cardioSec = 900; // 15 min
+    let cardioSec = 900;
 
     function toggleCardio() {
       const btn = document.getElementById("cardioStartBtn");
@@ -1454,7 +1638,7 @@
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `gym_hit_backup_${new Date().toISOString().slice(0,10)}.json`;
+      a.download = `gym_hit_simone_leone_${new Date().toISOString().slice(0,10)}.json`;
       a.click();
       URL.revokeObjectURL(url);
       showToast("Backup scaricato");
@@ -1471,7 +1655,7 @@
         reader.onload = ev => {
           try {
             const imported = JSON.parse(ev.target.result);
-            if (imported && imported.logs) {
+            if (imported && imported.profiles) {
               state = imported;
               saveState();
               renderAll();
@@ -1488,7 +1672,7 @@
     }
 
     function resetAllData() {
-      if (confirm("Vuoi davvero azzerare tutti i pesi e le sedute registrate?")) {
+      if (confirm("Vuoi davvero azzerare tutti i dati di Simone e Leone?")) {
         localStorage.removeItem(STORAGE_KEY);
         location.reload();
       }
@@ -1497,6 +1681,7 @@
     // Init
     loadState();
     renderAll();
+    stopRest();
   </script>
 </body>
 </html>
