@@ -694,15 +694,15 @@
     .cad-hold { color: var(--warn); }
     .cad-down { color: #95D600; }
 
-    /* Modal for Backup / Info */
+    /* Modal for Backup / Info / Video */
     .modal-backdrop {
       position: fixed;
       inset: 0;
-      background: rgba(0, 0, 0, 0.85);
+      background: rgba(0, 0, 0, 0.88);
       display: none;
       align-items: center;
       justify-content: center;
-      padding: 16px;
+      padding: 14px;
       z-index: 200;
     }
 
@@ -714,10 +714,10 @@
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      padding: 18px;
+      padding: 16px;
       width: 100%;
       max-width: 440px;
-      max-height: 85vh;
+      max-height: 88vh;
       overflow-y: auto;
     }
 
@@ -738,6 +738,62 @@
       font-weight: 700;
       margin-bottom: 10px;
       cursor: pointer;
+    }
+
+    /* In-App Video Player Modal */
+    .video-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .video-title {
+      font-size: var(--fs-body);
+      font-weight: 800;
+      color: var(--text);
+      margin: 0;
+      line-height: 1.25;
+    }
+
+    .close-x-btn {
+      background: var(--danger);
+      color: #ffffff;
+      border: none;
+      border-radius: 9px;
+      padding: 8px 14px;
+      font-size: var(--fs-small);
+      font-weight: 900;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .video-frame-wrap {
+      position: relative;
+      width: 100%;
+      height: 58vh;
+      max-height: 460px;
+      background: #000000;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      margin-bottom: 10px;
+    }
+
+    .video-frame-wrap iframe {
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+
+    .video-fallback-link {
+      display: block;
+      text-align: center;
+      font-size: var(--fs-small);
+      color: var(--muted);
+      text-decoration: underline;
+      padding: 4px 0;
     }
 
     .toast {
@@ -883,6 +939,20 @@
           <button class="d-btn" onclick="resetCadence()">Azzer</button>
         </div>
       </div>
+    </div>
+  </div>
+
+  <!-- In-App Video Player Modal -->
+  <div id="videoModal" class="modal-backdrop" onclick="if(event.target===this) closeVideoModal()">
+    <div class="modal" style="padding: 12px;">
+      <div class="video-header">
+        <h3 id="videoModalTitle" class="video-title">Esecuzione</h3>
+        <button class="close-x-btn" onclick="closeVideoModal()">✕ Chiudi</button>
+      </div>
+      <div class="video-frame-wrap">
+        <iframe id="videoIframe" src="" title="Video Esercizio" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+      </div>
+      <a id="videoFallbackLink" class="video-fallback-link" href="#" target="_blank" rel="noopener noreferrer">Se il video non parte, aprilo su YouTube ↗</a>
     </div>
   </div>
 
@@ -1173,6 +1243,8 @@
 
     // --- STATE ---
     const STORAGE_KEY = "gym_hit_2026_multiprofile_v2";
+    const TIMER_STORAGE_KEY = "gym_hit_2026_timers_v1";
+
     let state = {
       activeProfile: "simone",
       profiles: {
@@ -1191,6 +1263,12 @@
           logs: {}
         }
       }
+    };
+
+    let timerState = {
+      restEndTime: null,
+      cardioEndTime: null,
+      cardioPausedSec: 900
     };
 
     function getActiveState() {
@@ -1219,6 +1297,10 @@
             });
           }
         }
+        const tRaw = localStorage.getItem(TIMER_STORAGE_KEY);
+        if (tRaw) {
+          timerState = { ...timerState, ...JSON.parse(tRaw) };
+        }
       } catch (e) { console.error(e); }
 
       ["simone", "leone"].forEach(profKey => {
@@ -1246,11 +1328,37 @@
       } catch (e) { console.error(e); }
     }
 
+    function saveTimerState() {
+      try {
+        localStorage.setItem(TIMER_STORAGE_KEY, JSON.stringify(timerState));
+      } catch (e) { console.error(e); }
+    }
+
     function showToast(msg) {
       const t = document.getElementById("toast");
       t.textContent = msg;
       t.classList.add("show");
       setTimeout(() => t.classList.remove("show"), 2200);
+    }
+
+    // --- IN-APP VIDEO PLAYER ---
+    function openVideoModal(url, title) {
+      try {
+        const u = new URL(url);
+        const vid = u.searchParams.get("v");
+        const embedUrl = vid ? `https://www.youtube.com/embed/${vid}?autoplay=1&rel=0&playsinline=1` : url;
+        document.getElementById("videoModalTitle").textContent = title;
+        document.getElementById("videoIframe").src = embedUrl;
+        document.getElementById("videoFallbackLink").href = url;
+        document.getElementById("videoModal").classList.add("open");
+      } catch (e) {
+        window.open(url, "_blank", "noopener,noreferrer");
+      }
+    }
+
+    function closeVideoModal() {
+      document.getElementById("videoModal").classList.remove("open");
+      document.getElementById("videoIframe").src = "";
     }
 
     // --- UI RENDER ---
@@ -1259,7 +1367,6 @@
       const pConf = getActiveConfig();
       const isLeone = state.activeProfile === "leone";
 
-      // Theme & Header
       document.body.classList.toggle("profile-leone", isLeone);
       const accentColor = isLeone ? "#38bdf8" : "#95D600";
       document.getElementById("logoArc").setAttribute("stroke", accentColor);
@@ -1267,11 +1374,9 @@
       document.getElementById("logoBot").setAttribute("fill", accentColor);
       document.getElementById("headerSub").textContent = pConf.sub;
 
-      // Profile buttons
       document.getElementById("profSimone").classList.toggle("active", !isLeone);
       document.getElementById("profLeone").classList.toggle("active", isLeone);
 
-      // Week & Deload UI
       const weekNum = Math.floor(pState.completedCount / 3) + 1;
       document.getElementById("weekBadge").textContent = `${pConf.label} · Settimana ${weekNum} · Sedute: ${pState.completedCount}`;
       
@@ -1287,16 +1392,13 @@
         alertBox.classList.remove("show");
       }
 
-      // Tabs
       document.getElementById("tabA").classList.toggle("active", pState.currentTab === "A");
       document.getElementById("tabB").classList.toggle("active", pState.currentTab === "B");
       document.getElementById("tabASub").textContent = pConf.tabASub;
       document.getElementById("tabBSub").textContent = pConf.tabBSub;
 
-      // Breath bar
       document.getElementById("breathBar").innerHTML = pConf.breathNote;
 
-      // Mobility / Warmup
       document.getElementById("mobTitle").textContent = pConf.mobTitle;
       const mobCont = document.getElementById("mobilityContainer");
       mobCont.innerHTML = pConf.mobilityItems.map(item => `
@@ -1309,7 +1411,6 @@
         </label>
       `).join("");
 
-      // Rest Dock Buttons
       const r1 = pConf.restButtons[0];
       const r2 = pConf.restButtons[1];
       document.getElementById("restBtns").innerHTML = `
@@ -1318,10 +1419,8 @@
         <button class="d-btn" onclick="stopRest()">Stop</button>
       `;
 
-      // Cardio Section
       document.getElementById("cardioSection").style.display = pConf.hasCardio ? "block" : "none";
 
-      // Exercises
       const container = document.getElementById("exercisesContainer");
       container.innerHTML = "";
 
@@ -1350,8 +1449,9 @@
             setsHtml += renderSetRow(ex, s, log["s" + s], unit, pState.deloadMode, isLeone);
           }
 
+          const safeExName = ex.name.replace(/'/g, "\\'");
           const videosHtml = (ex.videos || []).map(v =>
-            `<a class="video-btn" href="${v.url}" target="_blank" rel="noopener noreferrer">🎥 ${v.label}</a>`
+            `<button type="button" class="video-btn" onclick="openVideoModal('${v.url}', '${safeExName} · ${v.label}')">🎥 ${v.label}</button>`
           ).join("");
 
           const card = document.createElement("div");
@@ -1361,7 +1461,7 @@
               <h3 class="ex-name"><span class="ex-code">${ex.code}</span>${ex.name}</h3>
               <div class="ex-meta">Target: <strong>${ex.sets} serie × ${ex.minReps}–${ex.maxReps} ${unit}</strong></div>
               <div class="ex-actions">
-                <button class="guide-btn" onclick="toggleGuide('${ex.id}')">📖 Tecnica</button>
+                <button type="button" class="guide-btn" onclick="toggleGuide('${ex.id}')">📖 Tecnica</button>
                 ${videosHtml}
               </div>
             </div>
@@ -1384,7 +1484,6 @@
         });
       });
 
-      // Modal Rules
       document.getElementById("modalTitle").textContent = `Regole (${pConf.label}) & Dati`;
       document.getElementById("modalRules").innerHTML = pConf.rulesHtml;
     }
@@ -1502,47 +1601,70 @@
       } catch (e) {}
     }
 
-    // --- REST TIMER ---
-    let restInterval = null;
-    let restRemaining = 60;
-
     function formatTime(sec) {
-      const m = Math.floor(sec / 60);
-      const s = sec % 60;
+      const sClamped = Math.max(0, sec);
+      const m = Math.floor(sClamped / 60);
+      const s = sClamped % 60;
       return `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
     }
 
+    // --- REST TIMER (Timestamp-based via Date.now()) ---
+    let restInterval = null;
+
     function startRest(seconds) {
       clearInterval(restInterval);
-      restRemaining = seconds;
-      document.getElementById("restDisplay").textContent = formatTime(restRemaining);
-      document.getElementById("restStatus").textContent = "IN CORSO";
-      document.getElementById("restStatus").style.color = "var(--warn)";
+      timerState.restEndTime = Date.now() + seconds * 1000;
+      saveTimerState();
       beep(520, 0.06);
+      tickRest();
+      restInterval = setInterval(tickRest, 250);
+    }
 
-      restInterval = setInterval(() => {
-        restRemaining--;
-        if (restRemaining <= 0) {
-          clearInterval(restInterval);
-          document.getElementById("restDisplay").textContent = "00:00";
-          document.getElementById("restStatus").textContent = "VAI!";
-          document.getElementById("restStatus").style.color = "var(--neon)";
-          beep(880, 0.15);
-          setTimeout(() => beep(880, 0.25), 180);
-          if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
-        } else {
-          document.getElementById("restDisplay").textContent = formatTime(restRemaining);
-        }
-      }, 1000);
+    function tickRest() {
+      if (!timerState.restEndTime) return;
+      const diffMs = timerState.restEndTime - Date.now();
+      const remSec = Math.ceil(diffMs / 1000);
+
+      if (remSec <= 0) {
+        clearInterval(restInterval);
+        timerState.restEndTime = null;
+        saveTimerState();
+        document.getElementById("restDisplay").textContent = "00:00";
+        document.getElementById("restStatus").textContent = "VAI!";
+        document.getElementById("restStatus").style.color = "var(--neon)";
+        beep(880, 0.15);
+        setTimeout(() => beep(880, 0.25), 180);
+        if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
+      } else {
+        document.getElementById("restDisplay").textContent = formatTime(remSec);
+        document.getElementById("restStatus").textContent = "IN CORSO";
+        document.getElementById("restStatus").style.color = "var(--warn)";
+      }
     }
 
     function stopRest() {
       clearInterval(restInterval);
+      timerState.restEndTime = null;
+      saveTimerState();
       const defaultRest = getActiveConfig().restButtons[0];
-      restRemaining = defaultRest;
       document.getElementById("restDisplay").textContent = formatTime(defaultRest);
       document.getElementById("restStatus").textContent = "PRONTO";
       document.getElementById("restStatus").style.color = "var(--neon)";
+    }
+
+    function restoreRestTimer() {
+      if (timerState.restEndTime) {
+        tickRest();
+        if (timerState.restEndTime) {
+          clearInterval(restInterval);
+          restInterval = setInterval(tickRest, 250);
+        }
+      } else {
+        const defaultRest = getActiveConfig().restButtons[0];
+        document.getElementById("restDisplay").textContent = formatTime(defaultRest);
+        document.getElementById("restStatus").textContent = "PRONTO";
+        document.getElementById("restStatus").style.color = "var(--neon)";
+      }
     }
 
     // --- CADENCE METRONOME (2s PUSH - 1s HOLD - 3s DOWN) ---
@@ -1606,71 +1728,125 @@
       document.getElementById("repCounter").textContent = "RIP: 0";
     }
 
-    // --- CARDIO TIMER ---
+    // --- CARDIO TIMER (Timestamp-based via Date.now()) ---
     let cardioInterval = null;
-    let cardioRunning = false;
-    let cardioSec = 900;
 
     function toggleCardio() {
       const btn = document.getElementById("cardioStartBtn");
-      if (cardioRunning) {
+      if (timerState.cardioEndTime) {
+        // Pause
+        const rem = Math.max(0, Math.ceil((timerState.cardioEndTime - Date.now()) / 1000));
         clearInterval(cardioInterval);
-        cardioRunning = false;
+        timerState.cardioEndTime = null;
+        timerState.cardioPausedSec = rem;
+        saveTimerState();
+        document.getElementById("cardioDisplay").textContent = formatTime(rem);
         btn.textContent = "Riprendi";
       } else {
-        cardioRunning = true;
+        // Start / Resume
+        const startFrom = timerState.cardioPausedSec > 0 ? timerState.cardioPausedSec : 900;
+        timerState.cardioEndTime = Date.now() + startFrom * 1000;
+        saveTimerState();
         btn.textContent = "Pausa";
-        cardioInterval = setInterval(() => {
-          cardioSec--;
-          if (cardioSec <= 0) {
-            clearInterval(cardioInterval);
-            cardioRunning = false;
-            document.getElementById("cardioDisplay").textContent = "00:00";
-            btn.textContent = "Fatto!";
-            beep(880, 0.3);
-            if (navigator.vibrate) navigator.vibrate([300, 150, 300]);
-          } else {
-            document.getElementById("cardioDisplay").textContent = formatTime(cardioSec);
-          }
-        }, 1000);
+        tickCardio();
+        cardioInterval = setInterval(tickCardio, 250);
+      }
+    }
+
+    function tickCardio() {
+      if (!timerState.cardioEndTime) return;
+      const btn = document.getElementById("cardioStartBtn");
+      const rem = Math.ceil((timerState.cardioEndTime - Date.now()) / 1000);
+
+      if (rem <= 0) {
+        clearInterval(cardioInterval);
+        timerState.cardioEndTime = null;
+        timerState.cardioPausedSec = 0;
+        saveTimerState();
+        document.getElementById("cardioDisplay").textContent = "00:00";
+        btn.textContent = "Fatto!";
+        beep(880, 0.3);
+        if (navigator.vibrate) navigator.vibrate([300, 150, 300]);
+      } else {
+        document.getElementById("cardioDisplay").textContent = formatTime(rem);
+        btn.textContent = "Pausa";
       }
     }
 
     function resetCardio() {
       clearInterval(cardioInterval);
-      cardioRunning = false;
-      cardioSec = 900;
+      timerState.cardioEndTime = null;
+      timerState.cardioPausedSec = 900;
+      saveTimerState();
       document.getElementById("cardioDisplay").textContent = "15:00";
       document.getElementById("cardioStartBtn").textContent = "Avvia";
     }
 
+    function restoreCardioTimer() {
+      const btn = document.getElementById("cardioStartBtn");
+      if (timerState.cardioEndTime) {
+        tickCardio();
+        if (timerState.cardioEndTime) {
+          clearInterval(cardioInterval);
+          cardioInterval = setInterval(tickCardio, 250);
+        }
+      } else {
+        const sec = timerState.cardioPausedSec !== undefined ? timerState.cardioPausedSec : 900;
+        document.getElementById("cardioDisplay").textContent = formatTime(sec);
+        btn.textContent = (sec > 0 && sec < 900) ? "Riprendi" : "Avvia";
+      }
+    }
+
     // --- WAKE LOCK ---
     let wakeLock = null;
-    async function toggleWakeLock() {
+    let wakeLockDesired = false;
+
+    async function requestWakeLockInternal(silent = false) {
       const btn = document.getElementById("wakeBtn");
       if (!("wakeLock" in navigator)) {
-        showToast("WakeLock non supportato dal browser");
+        if (!silent) showToast("WakeLock non supportato dal browser");
         return;
       }
-      if (wakeLock) {
-        await wakeLock.release();
-        wakeLock = null;
+      try {
+        wakeLock = await navigator.wakeLock.request("screen");
+        btn.classList.add("active");
+        if (!silent) showToast("Schermo sempre acceso attivo");
+        wakeLock.addEventListener("release", () => {
+          wakeLock = null;
+          if (!wakeLockDesired) btn.classList.remove("active");
+        });
+      } catch (err) {
+        if (!silent) showToast("Impossibile attivare schermo acceso");
+      }
+    }
+
+    async function toggleWakeLock() {
+      const btn = document.getElementById("wakeBtn");
+      if (wakeLockDesired || wakeLock) {
+        wakeLockDesired = false;
+        if (wakeLock) {
+          await wakeLock.release();
+          wakeLock = null;
+        }
         btn.classList.remove("active");
         showToast("Blocco schermo normale");
       } else {
-        try {
-          wakeLock = await navigator.wakeLock.request("screen");
-          btn.classList.add("active");
-          showToast("Schermo sempre acceso attivo");
-          wakeLock.addEventListener("release", () => {
-            wakeLock = null;
-            btn.classList.remove("active");
-          });
-        } catch (err) {
-          showToast("Impossibile attivare schermo acceso");
-        }
+        wakeLockDesired = true;
+        await requestWakeLockInternal(false);
       }
     }
+
+    // --- RESUME SYNC ON APP RETURN ---
+    function syncTimersOnResume() {
+      restoreRestTimer();
+      restoreCardioTimer();
+      if (document.visibilityState === "visible" && wakeLockDesired && !wakeLock) {
+        requestWakeLockInternal(true);
+      }
+    }
+
+    document.addEventListener("visibilitychange", syncTimersOnResume);
+    window.addEventListener("focus", syncTimersOnResume);
 
     // --- MODAL & BACKUP ---
     function openModal() { document.getElementById("settingsModal").classList.add("open"); }
@@ -1718,6 +1894,7 @@
     function resetAllData() {
       if (confirm("Vuoi davvero azzerare tutti i dati di Simone e Leone?")) {
         localStorage.removeItem(STORAGE_KEY);
+        localStorage.removeItem(TIMER_STORAGE_KEY);
         location.reload();
       }
     }
@@ -1725,7 +1902,8 @@
     // Init
     loadState();
     renderAll();
-    stopRest();
+    restoreRestTimer();
+    restoreCardioTimer();
   </script>
 </body>
 </html>
