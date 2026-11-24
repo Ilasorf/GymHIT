@@ -74,7 +74,7 @@
       -webkit-overflow-scrolling: touch;
     }
 
-    button {
+    button, a {
       touch-action: manipulation;
     }
 
@@ -383,13 +383,6 @@
       margin-bottom: 12px;
     }
 
-    .ex-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 8px;
-    }
-
     .ex-code {
       display: inline-block;
       background: var(--neon);
@@ -415,17 +408,35 @@
       margin-top: 5px;
     }
 
-    .guide-btn {
+    .ex-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .guide-btn, .video-btn {
       background: var(--surface-2);
       border: 1px solid var(--border);
       color: var(--text);
       font-size: var(--fs-small);
       font-weight: 700;
-      padding: 8px 11px;
+      padding: 8px 12px;
       border-radius: 9px;
       cursor: pointer;
-      white-space: nowrap;
-      flex-shrink: 0;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .video-btn {
+      border-color: rgba(239, 68, 68, 0.45);
+      color: #fca5a5;
+    }
+
+    .video-btn:active {
+      background: rgba(239, 68, 68, 0.2);
     }
 
     .guide-box {
@@ -917,12 +928,14 @@
               items: [
                 {
                   id: "S_A_1A", code: "1A", name: "Leg Press (Macchina)", sets: 2, minReps: 10, maxReps: 12, stepKg: 2.5, defaultKg: 40,
+                  videos: [{ label: "Video (59s)", url: "https://www.youtube.com/watch?v=nDh_BlnLCGc" }],
                   setup: "Schienale regolato per avere 90° alle ginocchia in partenza. Piedi larghezza spalle sulla pedana, punte leggermente in fuori.",
                   exec: "Spingi la pedana espirando senza bloccare del tutto le ginocchia a fine corsa. Scendi in 3 secondi inspirando fino a portare le cosce vicino al busto.",
                   err: "Alzare il sedere o staccare la bassa schiena dallo schienale a fine discesa."
                 },
                 {
                   id: "S_A_1B", code: "1B", name: "Seated Leg Curl (Femorali Seduto)", sets: 2, minReps: 10, maxReps: 12, stepKg: 2.5, defaultKg: 25,
+                  videos: [{ label: "Video (19s)", url: "https://www.youtube.com/watch?v=xdbEG3xGLI8" }],
                   setup: "Allinea il perno della macchina con il centro del ginocchio. Cuscino ben saldo sulle cosce, rullo appena sopra i talloni.",
                   exec: "Piega le gambe portando i talloni sotto il sedile espirando. Ferma 1 secondo, poi risali frenando il peso per 3 secondi.",
                   err: "Slanciarsi in avanti con il busto o far sbattere i pesi a fine corsa."
@@ -934,12 +947,14 @@
               items: [
                 {
                   id: "S_A_2A", code: "2A", name: "Chest Press (Macchina)", sets: 2, minReps: 8, maxReps: 10, stepKg: 2.5, defaultKg: 25,
+                  videos: [{ label: "Video (14s)", url: "https://www.youtube.com/watch?v=YXjhMV7uz4c" }],
                   setup: "Sedile regolato con le maniglie all'altezza del centro del petto (mai alle spalle). Scapole appoggiate, spalle basse.",
                   exec: "Spingi in avanti espirando fino a quasi distendere i gomiti. Torna indietro in 3 secondi inspirando.",
                   err: "Alzare le spalle verso le orecchie durante la spinta o staccare le scapole."
                 },
                 {
                   id: "S_A_2B", code: "2B", name: "Rematore con Manubrio su Panca", sets: 2, minReps: 8, maxReps: 10, stepKg: 1, defaultKg: 12,
+                  videos: [{ label: "Video (19s)", url: "https://www.youtube.com/watch?v=qN54-QNO1eQ" }],
                   setup: "Ginocchio e mano dello stesso lato appoggiati su panca piana, schiena piatta parallela al suolo, altro piede ben piantato a terra.",
                   exec: "Tira il manubrio verso l'anca (non verso la spalla) con gomito vicino al fianco espirando. Ferma 1 sec in alto, scendi in 3 secondi.",
                   err: "Ruotare il busto o dare strattoni con la zona lombare per alzare il peso."
@@ -951,12 +966,17 @@
               items: [
                 {
                   id: "S_A_3A", code: "3A", name: "Face Pull ai Cavi (Cuffia Rotatori)", sets: 2, minReps: 12, maxReps: 15, stepKg: 1.25, defaultKg: 10,
+                  videos: [{ label: "Video (16s)", url: "https://www.youtube.com/watch?v=pB9qVPwWp1I" }],
                   setup: "Carrucola all'altezza del viso con corda doppia. Afferra con i pollici rivolti verso di te, due passi indietro, braccia tese.",
                   exec: "Tira la corda verso la fronte allargando i gomiti e ruotando indietro i polsi (mani ai lati delle orecchie) espirando. Torna in 3 secondi.",
                   err: "Tirare verso il petto o inarcare la schiena all'indietro."
                 },
                 {
                   id: "S_A_3B", code: "3B", name: "Plank (35s) + Pushdown Tricipiti Cavo", sets: 2, minReps: 12, maxReps: 15, stepKg: 1.25, defaultKg: 15,
+                  videos: [
+                    { label: "Plank (29s)", url: "https://www.youtube.com/watch?v=v25dawSzRTM" },
+                    { label: "Pushdown (30s)", url: "https://www.youtube.com/watch?v=NvZKjiZ8NYc" }
+                  ],
                   setup: "Prima 35s di Plank (gomiti sotto le spalle, corpo teso, respiro regolare). Subito dopo al cavo alto con barra/corda e gomiti ai fianchi.",
                   exec: "Al cavo, estendi completamente gli avambracci verso il basso espirando. Risali con gli avambracci in 3 secondi tenendo i gomiti immobili.",
                   err: "Trattenere il fiato nel Plank o muovere i gomiti avanti e indietro nel Pushdown."
@@ -970,12 +990,14 @@
               items: [
                 {
                   id: "S_B_1A", code: "1A", name: "Goblet Squat con Manubrio", sets: 2, minReps: 10, maxReps: 12, stepKg: 2, defaultKg: 12,
+                  videos: [{ label: "Video (22s)", url: "https://www.youtube.com/watch?v=lRYBbchqxtI" }],
                   setup: "Tieni un manubrio verticale davanti al petto con entrambe le mani sotto il disco superiore. Piedi poco più larghi delle spalle.",
                   exec: "Scendi in 3 secondi inspirando piegando ginocchia e anche con petto alto e talloni a terra. Risali spingendo sui talloni ed espirando.",
                   err: "Sollevare i talloni da terra o far cadere le ginocchia verso l'interno."
                 },
                 {
                   id: "S_B_1B", code: "1B", name: "Lying Leg Curl (Femorali Sdraiato)", sets: 2, minReps: 10, maxReps: 12, stepKg: 2.5, defaultKg: 20,
+                  videos: [{ label: "Video (21s)", url: "https://www.youtube.com/watch?v=uNPWyzhzbBI" }],
                   setup: "Sdraiati a pancia in giù con le rotule appena fuori dal bordo inferiore della panca e il rullo appoggiato dietro le caviglie.",
                   exec: "Porta i talloni verso i glutei espirando in 1–2 sec, ferma 1 secondo, ridiscendi in 3 secondi mantenendo il bacino premuto sul cuscino.",
                   err: "Sollevare il bacino inarcando la zona lombare mentre pieghi le gambe."
@@ -987,12 +1009,14 @@
               items: [
                 {
                   id: "S_B_2A", code: "2A", name: "Spinte Spalle Manubri (Seduto)", sets: 2, minReps: 8, maxReps: 10, stepKg: 1, defaultKg: 8,
+                  videos: [{ label: "Video (21s)", url: "https://www.youtube.com/watch?v=E9ShwbwZ1zw" }],
                   setup: "Panca con schienale a 75–80°. Manubri all'altezza delle orecchie, palmi in avanti, gomiti leggermente più avanti rispetto al busto.",
                   exec: "Spingi i manubri verso l'alto espirando senza farli sbattere e senza bloccare i gomiti. Scendi in 3 secondi inspirando fino alle orecchie.",
                   err: "Inarcare la bassa schiena staccandola dallo schienale durante la spinta."
                 },
                 {
                   id: "S_B_2B", code: "2B", name: "Lat Pulldown (Tirata Verticale)", sets: 2, minReps: 8, maxReps: 12, stepKg: 2.5, defaultKg: 30,
+                  videos: [{ label: "Video (48s)", url: "https://www.youtube.com/watch?v=hnSqbBk15tw" }],
                   setup: "Blocca bene le cosce sotto il cuscino. Presa poco più larga delle spalle (o maniglia neutra triangolare). Petto aperto verso l'alto.",
                   exec: "Tira la sbarra fino alla parte alta dello sterno portando i gomiti verso il basso ed espirando. Risali in 3 secondi inspirando.",
                   err: "Dondolare eccessivamente indietro con la schiena o tirare la sbarra dietro la nuca."
@@ -1004,12 +1028,17 @@
               items: [
                 {
                   id: "S_B_3A", code: "3A", name: "Farmer's Carry (Camminata con Pesi)", sets: 2, minReps: 30, maxReps: 40, unitLabel: "sec/m", stepKg: 2, defaultKg: 14,
+                  videos: [{ label: "Video (35s)", url: "https://www.youtube.com/watch?v=lLAw6fUccKA" }],
                   setup: "Afferra due manubri pesanti lungo i fianchi. Spalle indietro e basse, addome contratto, sguardo dritto avanti.",
                   exec: "Cammina a passi brevi e controllati per 30–40 secondi/metri mantenendo il busto immobile e respirando in modo fluido.",
                   err: "Oscillare lateralmente con le spalle o trattenere il fiato mentre cammini."
                 },
                 {
                   id: "S_B_3B", code: "3B", name: "Curl Bicipiti Manubri + Calf Raise", sets: 2, minReps: 10, maxReps: 12, stepKg: 1, defaultKg: 8,
+                  videos: [
+                    { label: "Curl (15s)", url: "https://www.youtube.com/watch?v=iui51E31sX8" },
+                    { label: "Polpacci (57s)", url: "https://www.youtube.com/watch?v=baEXLy09Ncc" }
+                  ],
                   setup: "In piedi, manubri ai fianchi. Subito dopo il curl, passa alla macchina polpacci (o gradino) con avampiedi in appoggio.",
                   exec: "Curl: piega i gomiti ruotando i palmi in alto ed espirando, scendi in 3 sec. Polpacci: spingi sulle punte espirando, ferma 1s, scendi in 3s.",
                   err: "Slanciare la schiena nel curl o rimbalzare velocemente sui polpacci."
@@ -1047,18 +1076,21 @@
               items: [
                 {
                   id: "L_A_1", code: "1", name: "Goblet Squat con Manubrio", sets: 3, minReps: 8, maxReps: 12, stepKg: 2, defaultKg: 8,
+                  videos: [{ label: "Video (22s)", url: "https://www.youtube.com/watch?v=lRYBbchqxtI" }],
                   setup: "Tieni un manubrio verticale davanti al petto con entrambe le mani. Piedi poco più larghi delle spalle, punte leggermente in fuori.",
                   exec: "Scendi controllando in 2–3 secondi inspirando, schiena dritta e talloni a terra. Risali spingendo sui talloni ed espirando.",
                   err: "Alzare i talloni o far chiudere le ginocchia verso l'interno mentre risali."
                 },
                 {
                   id: "L_A_2", code: "2", name: "Chest Press Machine (o Piegamenti)", sets: 3, minReps: 8, maxReps: 12, stepKg: 2, defaultKg: 15,
+                  videos: [{ label: "Video (14s)", url: "https://www.youtube.com/watch?v=YXjhMV7uz4c" }],
                   setup: "Sedile regolato con maniglie al centro del petto. Scapole appoggiate allo schienale, spalle basse lontane dalle orecchie.",
                   exec: "Spingi in avanti espirando fino a quasi distendere i gomiti. Torna indietro in 2–3 secondi inspirando.",
                   err: "Alzare le spalle verso il collo o staccare la schiena dallo schienale."
                 },
                 {
                   id: "L_A_3", code: "3", name: "Rematore con Manubrio su Panca", sets: 3, minReps: 8, maxReps: 12, stepKg: 1, defaultKg: 8,
+                  videos: [{ label: "Video (19s)", url: "https://www.youtube.com/watch?v=qN54-QNO1eQ" }],
                   setup: "Ginocchio e mano dello stesso lato appoggiati su panca piana, schiena piatta parallela al suolo, altro piede ben piantato a terra.",
                   exec: "Tira il manubrio verso l'anca con il gomito vicino al fianco espirando. Scendi controllando in 2–3 secondi inspirando.",
                   err: "Ruotare il busto per aiutarti a tirare su il manubrio."
@@ -1070,12 +1102,14 @@
               items: [
                 {
                   id: "L_A_4", code: "4", name: "Seated Leg Curl (Femorali Seduto)", sets: 2, minReps: 10, maxReps: 12, stepKg: 2.5, defaultKg: 15,
+                  videos: [{ label: "Video (19s)", url: "https://www.youtube.com/watch?v=xdbEG3xGLI8" }],
                   setup: "Allinea il perno della macchina con il centro del ginocchio. Cuscino ben fermo sulle cosce, rullo appena sopra i talloni.",
                   exec: "Piega le gambe portando i talloni sotto il sedile espirando. Risali frenando il peso in 2–3 secondi senza far sbattere i dischi.",
                   err: "Darsi lo slancio con la schiena in avanti."
                 },
                 {
                   id: "L_A_5", code: "5", name: "Plank a Terra (Tenuta Addome)", sets: 3, minReps: 30, maxReps: 45, unitLabel: "sec", stepKg: 0, defaultKg: 0,
+                  videos: [{ label: "Video (29s)", url: "https://www.youtube.com/watch?v=v25dawSzRTM" }],
                   setup: "Gomiti a terra esattamente sotto le spalle, corpo teso in linea retta dalla testa ai talloni.",
                   exec: "Contrai addome e glutei mantenendo la posizione per 30–45 secondi respirando in modo regolare e continuo.",
                   err: "Trattenere il fiato o lasciar cadere il bacino verso il pavimento."
@@ -1089,18 +1123,21 @@
               items: [
                 {
                   id: "L_B_1", code: "1", name: "Leg Press (Macchina)", sets: 3, minReps: 10, maxReps: 12, stepKg: 2.5, defaultKg: 30,
+                  videos: [{ label: "Video (59s)", url: "https://www.youtube.com/watch?v=nDh_BlnLCGc" }],
                   setup: "Schienale regolato per avere circa 90° alle ginocchia in partenza. Piedi larghezza spalle sulla pedana.",
                   exec: "Spingi la pedana espirando senza bloccare del tutto le ginocchia. Scendi controllando in 2–3 secondi inspirando.",
                   err: "Staccare il sedere o la zona lombare dallo schienale a fine discesa."
                 },
                 {
                   id: "L_B_2", code: "2", name: "Lat Pulldown (Tirata alla Sbarra)", sets: 3, minReps: 8, maxReps: 12, stepKg: 2.5, defaultKg: 20,
+                  videos: [{ label: "Video (48s)", url: "https://www.youtube.com/watch?v=hnSqbBk15tw" }],
                   setup: "Blocca le cosce sotto il cuscino. Presa poco più larga delle spalle, petto aperto verso l'alto.",
                   exec: "Tira la sbarra fino alla parte alta dello sterno portando i gomiti verso il basso ed espirando. Risali in 2–3 secondi.",
                   err: "Dondolare eccessivamente indietro con il busto per tirare il peso."
                 },
                 {
                   id: "L_B_3", code: "3", name: "Spinte Spalle Manubri da Seduto", sets: 3, minReps: 8, maxReps: 12, stepKg: 1, defaultKg: 6,
+                  videos: [{ label: "Video (21s)", url: "https://www.youtube.com/watch?v=E9ShwbwZ1zw" }],
                   setup: "Panca con schienale quasi verticale (75–80°). Manubri all'altezza delle orecchie, palmi in avanti, gomiti leggermente avanti.",
                   exec: "Spingi i manubri verso l'alto espirando senza farli sbattere. Scendi in 2–3 secondi inspirando fino alle orecchie.",
                   err: "Inarcare la bassa schiena staccandola dallo schienale."
@@ -1112,12 +1149,17 @@
               items: [
                 {
                   id: "L_B_4", code: "4", name: "Face Pull ai Cavi (Postura Spalle)", sets: 2, minReps: 12, maxReps: 15, stepKg: 1.25, defaultKg: 7.5,
+                  videos: [{ label: "Video (16s)", url: "https://www.youtube.com/watch?v=pB9qVPwWp1I" }],
                   setup: "Carrucola all'altezza del viso con corda doppia. Afferra con i pollici verso di te, due passi indietro, braccia tese.",
                   exec: "Tira la corda verso la fronte allargando i gomiti e ruotando indietro i polsi espirando. Torna in 2–3 secondi.",
                   err: "Inarcare la schiena all'indietro o tirare verso il petto."
                 },
                 {
                   id: "L_B_5", code: "5", name: "Curl Bicipiti + Pushdown Tricipiti", sets: 2, minReps: 10, maxReps: 12, stepKg: 1, defaultKg: 6,
+                  videos: [
+                    { label: "Curl (15s)", url: "https://www.youtube.com/watch?v=iui51E31sX8" },
+                    { label: "Pushdown (30s)", url: "https://www.youtube.com/watch?v=NvZKjiZ8NYc" }
+                  ],
                   setup: "Esegui prima i bicipiti con manubri (gomiti fermi ai fianchi) e subito dopo i tricipiti al cavo alto con barra o corda.",
                   exec: "Movimenti fluidi e controllati senza slanciare la schiena, espirando in chiusura/spinta e frenando in ritorno.",
                   err: "Muovere i gomiti avanti e indietro per aiutarti."
@@ -1161,7 +1203,6 @@
 
     function loadState() {
       try {
-        // Migrate old v1 data for Simone if present
         const oldRaw = localStorage.getItem("gym_hit_2026_state_v1");
         const raw = localStorage.getItem(STORAGE_KEY);
         if (raw) {
@@ -1180,7 +1221,6 @@
         }
       } catch (e) { console.error(e); }
 
-      // Ensure all exercises for both profiles are initialized
       ["simone", "leone"].forEach(profKey => {
         const pData = PROFILES_DATA[profKey];
         const pState = state.profiles[profKey];
@@ -1295,7 +1335,6 @@
           const log = pState.logs[ex.id];
           const unit = ex.unitLabel || "rip";
           
-          // Check if all sets reached maxReps
           let allMax = true;
           for (let s = 1; s <= ex.sets; s++) {
             if (!log["s" + s] || log["s" + s].reps < ex.maxReps) {
@@ -1311,15 +1350,20 @@
             setsHtml += renderSetRow(ex, s, log["s" + s], unit, pState.deloadMode, isLeone);
           }
 
+          const videosHtml = (ex.videos || []).map(v =>
+            `<a class="video-btn" href="${v.url}" target="_blank" rel="noopener noreferrer">🎥 ${v.label}</a>`
+          ).join("");
+
           const card = document.createElement("div");
           card.className = "ex-card";
           card.innerHTML = `
-            <div class="ex-top">
-              <div style="min-width:0;">
-                <h3 class="ex-name"><span class="ex-code">${ex.code}</span>${ex.name}</h3>
-                <div class="ex-meta">Target: <strong>${ex.sets} serie × ${ex.minReps}–${ex.maxReps} ${unit}</strong></div>
+            <div>
+              <h3 class="ex-name"><span class="ex-code">${ex.code}</span>${ex.name}</h3>
+              <div class="ex-meta">Target: <strong>${ex.sets} serie × ${ex.minReps}–${ex.maxReps} ${unit}</strong></div>
+              <div class="ex-actions">
+                <button class="guide-btn" onclick="toggleGuide('${ex.id}')">📖 Tecnica</button>
+                ${videosHtml}
               </div>
-              <button class="guide-btn" onclick="toggleGuide('${ex.id}')">📖 Tecnica</button>
             </div>
 
             <div id="guide_${ex.id}" class="guide-box">
